@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block main %}
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Prediction Results</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h5>Prediction Input:</h5>
+                <div>Case ID: <span id="sl"></span></div>
+                <div>Lawyer ID: <span id="lawyer_id"></span></div>
+                <div>Client ID: <span id="client_id"></span></div>
+                <div>Case Name: <span id="case_name"></span></div>
+                <h5 class="pt-3">Prediction Classification:</h5>
+                <div id="prediction"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <a class="btn btn-primary" href="/results" role="button">View DB</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container pt-5">
+    <div class="row justify-content-md-center">
+        <div class="col-md-4">
+            <h1>Case Prediction</h1>
+            <form action="" id="post-form">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="case_id">Case ID</label>
+                    <input type="text" class="form-control" id="case_id" placeholder="" required>
+                </div>
+                <div class="form-group">
+                    <label for="lawyer_id">Lawyer ID</label>
+                    <input type="text" class="form-control" id="lawyer_id" placeholder="" required>
+                </div>
+                <div class="form-group">
+                    <label for="client_id">Client ID</label>
+                    <input type="text" class="form-control" id="client_id" placeholder="" required>
+                </div>
+                <div class="form-group">
+                    <label for="case_name">Case Name</label>
+                    <input type="text" class="form-control" id="case_name" placeholder="" required>
+                </div>
+                <button type="submit" value="Submit" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).on('submit', '#post-form', function (e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '{% url "predict:case_data_entry" %}',
+            data: {
+                case_id: $('#case_id').val(),
+                lawyer_id: $('#lawyer_id').val(),
+                client_id: $('#client_id').val(),
+                case_name: $('#case_name').val(),
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                action: 'post'
+            },
+            success: function (json) {
+                document.forms["post-form"].reset();
+                document.getElementById("prediction").innerHTML = "Submitted successfully";
+                document.getElementById("sl").innerHTML = json['case_id'];
+                document.getElementById("lawyer_id").innerHTML = json['lawyer_id'];
+                document.getElementById("client_id").innerHTML = json['client_id'];
+                document.getElementById("case_name").innerHTML = json['case_name'];
+            },
+            error: function (xhr, errmsg, err) {
+                // Handle error if needed
+            }
+        });
+    });
+</script>
+
+{% endblock %}

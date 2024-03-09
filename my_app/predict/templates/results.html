@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block main %}
+    <div class="container pt-5">
+        <div class="row">
+
+       
+
+            <table class="table">
+                <h1>Lawyer Table</h1>
+                <thead>
+                <tr>
+                <th scope="col">#</th>
+                <th scope="col">Lawyer ID</th>
+                <th scope="col">Lawyer name</th>
+                <th scope="col">Specialization</th>
+                <th scope="col">contact_info</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for combined_data in dataset %}
+                    <tr>
+                    <th scope="row">{{ data.id }}</th>
+                    <td>{{ combined_data.lawyer_id }}</td>
+                    <td>{{ combined_data.lawyer_name }}</td>
+                    <td>{{ combined_data.specialization }}</td>
+                    <td>{{ combined_data.contact_info }}</td>
+                    </tr>
+                {% endfor %}
+                <thead>
+                    <h1>client Table</h1>
+                    <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">client ID</th>
+                    <th scope="col">client name</th>
+                    <th scope="col">address</th>
+                    <th scope="col">contact_info</th>
+                    <th scope="col">case_id</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for combined_data in dataset %}
+                        <tr>
+                        <th scope="row">{{ data.id }}</th>
+                        <td>{{ combined_data.client_id }}</td>
+                        <td>{{ combined_data.client_name }}</td>
+                        <td>{{ combined_data.address }}</td>
+                        <td>{{ combined_data.contact_info }}</td>
+                        <td>{{ combined_data.case_id }}</td>
+
+                        </tr>
+                    {% endfor %}
+                    <thead>
+                        <h1>Case Table</h1>
+                        <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">case ID</th>
+                        <th scope="col">client ID</th>
+                        <th scope="col">Lawyer ID</th>
+                        <th scope="col">case name</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for combined_data in dataset %}
+                            <tr>
+                            <th scope="row">{{ data.id }}</th>
+                            <td>{{ combined_data.case_id }}</td>
+                            <td>{{ combined_data.client_id }}</td>
+                            <td>{{ combined_data.lawyer_id }}</td>
+                            <td>{{ combined_data.case_name }}</td>
+                            </tr>
+                        {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lawyer Dashboard</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f7f7f7;
+            color: #333;
+        }
+
+        h1, h2 {
+            color: #004080;
+        }
+
+        h2 {
+            border-bottom: 2px solid #004080;
+            padding-bottom: 5px;
+            margin-top: 20px;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        p {
+            margin: 0;
+        }
+        nav {
+            background-color: #004080;
+            padding: 10px;
+            text-align: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+    </style>
+     <nav>
+        <a href="/documents">Enter document</a>
+        <a href="#dashboard">Dashboard</a>
+    </nav>
+</head>
+
+<body>
+    <h1>Dashboard</h1>
+
+    <!-- Display Lawyer Information -->
+    <h2>Your Information</h2>
+    <ul>
+        <li><strong>Lawyer ID:</strong> {{ lawyer_instance.lawyer_id }}</li>
+        <li><strong>Lawyer Name:</strong> {{ lawyer_instance.lawyer_name }}</li>
+        <li><strong>Specialization:</strong> {{ lawyer_instance.specialization }}</li>
+        <li><strong>Contact Info:</strong> {{ lawyer_instance.contact_info }}</li>
+    </ul>
+
+    <!-- Display Cases Information -->
+    <h2>Your Cases</h2>
+    <ul>
+        {% for case in cases %}
+            <li><strong>Case ID:</strong> {{ case.case_id }}</li>
+            <li><strong>Case Name:</strong> {{ case.case_name }}</li>
+            <!-- Add more case information as needed -->
+            <br>
+        {% endfor %}
+    </ul>
+
+    <!-- Display Clients Information -->
+    <h2>Your Clients</h2>
+    <ul>
+        {% for client in clients %}
+            <li><strong>Client ID:</strong> {{ client.client_id }}</li>
+            <li><strong>Client Name:</strong> {{ client.client_name }}</li>
+            <li><strong>Address:</strong> {{ client.address }}</li>
+            <li><strong>Contact Info:</strong> {{ client.contact_info }}</li>
+            <!-- Add more client information as needed -->
+            <br>
+        {% endfor %}
+    </ul>
+</body>
+
+</html>
