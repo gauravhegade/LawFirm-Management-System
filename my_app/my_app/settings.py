@@ -11,6 +11,11 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import os
+
+from dotenv import load_dotenv
+load_dotenv()
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -28,6 +33,8 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
+
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -38,7 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'crispy_forms',
-    'lawyer_app.apps.LawyerAppConfig',
+    'lawyer_app',
 ]
 
 MIDDLEWARE = [
@@ -75,13 +82,28 @@ WSGI_APPLICATION = 'my_app.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+SUPABASE_DB_NAME = os.getenv('SUPABASE_DB_NAME')
+SUPABASE_USER = os.getenv('SUPABASE_USER')
+SUPABASE_PASSWORD = os.getenv('SUPABASE_PASSWORD')
+SUPABASE_HOST = os.getenv('SUPABASE_HOST')
+SUPABASE_PORT = os.getenv('SUPABASE_PORT')
+
+# print("Database Name:", SUPABASE_DB_NAME)
+# print("User:", SUPABASE_USER)
+# print("Password:", SUPABASE_PASSWORD)
+# print("Host:", SUPABASE_HOST)
+# print("Port:", SUPABASE_PORT)
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': SUPABASE_DB_NAME,  # New database name
+        'USER': SUPABASE_USER,  # Supabase user
+        'PASSWORD': SUPABASE_PASSWORD,  # Supabase password
+        'HOST': SUPABASE_HOST,  # Supabase host
+        'PORT': SUPABASE_PORT,  # Supabase port
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -101,6 +123,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTH_USER_MODEL = r'lawyer_app.CustomUser'
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/

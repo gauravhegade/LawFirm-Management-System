@@ -1,53 +1,94 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AbstractUser
+from django.core.validators import RegexValidator,MaxLengthValidator
+from django.utils import timezone
+from django.conf import settings
+
+class CustomUser(AbstractUser):
+    email = models.EmailField(
+        max_length=254,
+        unique=True
+    )
 
 class Lawyer(models.Model):
-    #user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='lawyer_profile')
     lawyer_id = models.AutoField(primary_key=True)
-    lawyer_name = models.CharField(max_length = 100)
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL, 
+        on_delete=models.CASCADE, 
+        related_name='lawyer_profile'
+    )
     specialization = models.CharField(max_length = 100)
-    contact_info = models.IntegerField()
+    address = models.TextField(
+        validators=[MaxLengthValidator(250)]
+    )
+    mobile_number = models.CharField(
+        max_length=15,
+        validators=[
+            RegexValidator(r'^\+\d{1,3}\d{9,15}$', 
+                           message="Phone number must be entered in the format: '+919999999999'. Up to 15 digits allowed."
+                           )
+        ],
+        null=True,
+        blank=True
+    )
+    
+    registered_at = models.DateTimeField(default=timezone.now, editable=False)
 
     def __str__(self):
-        return str(self.lawyer_id)    
+        return f"{self.user.get_full_name()} {str(self.lawyer_id)}"  
    
 
 class Client(models.Model):
     client_id = models.AutoField(primary_key=True)
-    client_name = models.CharField(max_length=255)
-    address = models.TextField()
-    contact_info = models.CharField(max_length=255)
-   # user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='clients')
-   # case_id = models.ForeignKey("Case", on_delete = models.CASCADE)
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL, 
+        on_delete=models.CASCADE, 
+        related_name='client_profile'
+    )
+    address = models.TextField(
+        validators=[MaxLengthValidator(250)]
+    )
+    mobile_number = models.CharField(
+        max_length=15,
+        validators=[
+            RegexValidator(r'^\+\d{1,3}\d{9,15}$',
+                           message="Format: '+919999999999'. Up to 15 digits allowed."
+                        )
+        ],
+        unique=True
+    )
+
+    registered_at = models.DateTimeField(default=timezone.now, editable=False)
 
     def __str__(self):
-        return self.client_name
+        return f"{self.user.get_full_name()} {str(self.client_id)}"
 
 class Case(models.Model):
     case_id = models.AutoField(primary_key=True)
-    lawyer_id= models.ForeignKey(Lawyer, on_delete=models.CASCADE)
-    client_id= models.ForeignKey(Client, on_delete=models.CASCADE)
+    lawyer= models.ForeignKey(Lawyer, on_delete=models.CASCADE)
+    client= models.ForeignKey(Client, on_delete=models.CASCADE)
     case_name = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.case_name
 
-class Documents(models.Model):
-    document_id = models.IntegerField(primary_key=True)
-    case_id = models.ForeignKey(Case, on_delete = models.CASCADE)
+class Document(models.Model):
+    document_id = models.AutoField(primary_key=True)
+    case = models.ForeignKey(Case, on_delete = models.CASCADE)
     document_type= models.CharField(max_length = 100)
-    upload_date = models.CharField(max_length = 100)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.document_id
+        return str(self.document_id)
 
 
 class LegalResearch(models.Model):
         research_id = models.AutoField(primary_key=True)
         research_topic = models.CharField(max_length = 200)
         researcher_name = models.CharField(max_length = 200)
-        legal_caseid = models.ForeignKey(Case, on_delete = models.CASCADE)
+        case = models.ForeignKey(Case, on_delete = models.CASCADE)
 
         def __str__ (self):
-            return self.research_id
-# Create your models here.
+            return str(self.research_id)
+

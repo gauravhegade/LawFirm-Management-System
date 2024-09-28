@@ -72,7 +72,7 @@ def login_user(request):
 
         else:
             messages.success(request, "Invalid username or password. Try again.")
-            return redirect('login')
+            return redirect('/')
 
     else:
         return render(request, 'login.html', {})
