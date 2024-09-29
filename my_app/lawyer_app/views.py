@@ -1,12 +1,13 @@
 from django.shortcuts import render
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .forms import UserRegisterForm,DocumentForm, LoginForm
+from .forms import UserRegisterForm,DocumentForm, LoginForm,ClientProfileForm,LawyerProfileForm
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from .models import Lawyer, Case, Client, CustomUser
 import pandas as pd
 from django.http import JsonResponse,HttpResponse
+from django.contrib.auth.decorators import login_required
 from django import forms
 from .preprocessing import preprocess_input
 
@@ -16,41 +17,100 @@ def info(request):
     if request.method == "GET":
         return render(request,'info.html')
 
+
 def login_user(request):
     if request.method == 'POST':
         form = LoginForm(request, data=request.POST)
         if form.is_valid():
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
-            print(username,password)
             user = authenticate(request, username=username, password=password)
+            
             if user is not None:
-                login(request, user)
-                return HttpResponse(f"Welcome {username}")  # Redirect to a dashboard or home page after login
+                if user.is_active:  
+                    login(request, user)
+
+                    if hasattr(user, 'lawyer_profile') and not user.lawyer_profile.profile_complete:
+                        messages.info(request, 'Please complete your lawyer profile.')
+                        return redirect('/lawyer/complete-profile')  
+                    
+                    elif hasattr(user, 'client_profile') and not user.client_profile.profile_complete:
+                        messages.info(request, 'Please complete your client profile.')
+                        return redirect('/client/complete-profile')  
+                    
+                   
+                    return redirect('login') 
+
+                else:
+                    messages.error(request, 'Your account is not active. Please wait for approval.')
+                    return redirect('login') 
             else:
-                messages.error(request, "Invalid username or password.")
+                messages.error(request, 'Invalid username or password.')
         else:
-            messages.error(request, "Invalid login details.")
+            messages.error(request, 'Please correct the errors below.')
+    
     else:
         form = LoginForm()
     
     return render(request, 'login.html', {'form': form})
+
    
 def register(request):
     if request.method == 'POST':
         form = UserRegisterForm(request.POST)
         if form.is_valid():
-            form.save()
+            user = form.save(commit=False)
+            user.is_active = False  # Set the user as inactive
+            user.save()
+            role = form.cleaned_data.get('role')
+
+            if role == 'lawyer':
+                Lawyer.objects.create(user=user)
+            elif role == 'client':
+                Client.objects.create(user=user)
+            
             username = form.cleaned_data.get('username')
-            messages.success(request, f'Account created for {username}!')
-            return redirect('/')
+            messages.success(request, f'Account created for {username}! Please wait for approval.')
+            return redirect('/login')
         else:
-            messages.info(request,f'Account creation failed')
-            #print(form.data.get('username'),form.data.get('email') , form.data.get('password1'))
-    
+            messages.info(request, f'Account creation failed')
+
     else:
         form = UserRegisterForm()
     return render(request, 'register.html', {'form': form})
+
+
+def complete_lawyer_profile(request):
+    lawyer_profile = request.user.lawyer_profile  # Get lawyer profile for current user
+    if request.method == 'POST':
+        form = LawyerProfileForm(request.POST, instance=lawyer_profile)
+        if form.is_valid():
+            form.save()
+            lawyer_profile.profile_complete = True  # Mark profile as complete
+            lawyer_profile.save()
+            messages.success(request, 'Lawyer profile updated successfully.')
+            return redirect('/login')  # Redirect to dashboard after completion
+    else:
+        form = LawyerProfileForm(instance=lawyer_profile)
+    
+    return render(request, 'complete_lawyer_profile.html', {'form': form})
+
+@login_required
+def complete_client_profile(request):
+    client_profile = request.user.client_profile  # Get client profile for current user
+    if request.method == 'POST':
+        form = ClientProfileForm(request.POST, instance=client_profile)
+        if form.is_valid():
+            form.save()
+            client_profile.profile_complete = True  # Mark profile as complete
+            client_profile.save()
+            messages.success(request, 'Client profile updated successfully.')
+            return redirect('/login')  # Redirect to dashboard after completion
+    else:
+        form = ClientProfileForm(instance=client_profile)
+    
+    return render(request, 'complete_client_profile.html', {'form': form})
+
 '''
 def lawyer_dashboard(request, lawyer_id):
     # Assuming the lawyer_id is passed as a parameter in the URL

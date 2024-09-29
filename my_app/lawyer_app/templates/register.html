@@ -19,6 +19,15 @@
             </p>
         </div>
         <div>
+            <label for="id_role" class="block text-sm font-medium text-gray-700">Role:</label>
+            <select name="role" id="id_role" class="mt-1 block px-3 h-8 w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50" required>
+                <option value="" disabled selected>Select your role</option>
+                <option value="lawyer">Lawyer</option>
+                <option value="client">Client</option>
+            </select>
+            <p id="role-error" class="text-red-600 text-sm mt-1 hidden"></p>
+        </div>
+        <div>
             <label for="id_password" class="block text-sm font-medium text-gray-700">Password:</label>
             <input type="password" name="password1" id="id_password" class="mt-1 px-3 block w-full h-8 border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50" required autocomplete="new-password">
             <div class="bg-gray-50 rounded-lg shadow-inner px-4 py-1 mt-2">
@@ -141,7 +150,6 @@
     confirmPasswordInput.addEventListener('input', validatePassword);
 
     emailInput.addEventListener('input',validateEmail);
-    // Form submission validation
     form.addEventListener('submit', function(event) {
         // Clear previous error messages
         document.getElementById('username-error').classList.add('hidden');
@@ -174,7 +182,7 @@
         }
 
         if (hasError) {
-            event.preventDefault(); // Prevent form submission
+            event.preventDefault();
         }
     });
 </script>

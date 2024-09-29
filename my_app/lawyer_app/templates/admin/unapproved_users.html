@@ -1,0 +1,29 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+<div class="p-6">
+    <h1 class="text-2xl font-bold mb-4">{{ title }}</h1>
+    <table class="min-w-full bg-white border border-gray-300">
+        <thead>
+            <tr>
+                <th class="py-2 px-4 border-b text-left">Username</th>
+                <th class="py-2 px-4 border-b text-left">Email</th>
+                <th class="py-2 px-4 border-b text-left">Is Active</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in unapproved_users %}
+            <tr class="hover:bg-gray-100">
+                <td class="py-2 px-4 border-b">{{ user.username }}</td>
+                <td class="py-2 px-4 border-b">{{ user.email }}</td>
+                <td class="py-2 px-4 border-b">{{ user.is_active }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3" class="py-2 px-4 border-b text-center">No unapproved users found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
