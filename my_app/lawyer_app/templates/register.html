@@ -2,21 +2,181 @@
 {% block header %}Register{% endblock %}
 
 {% block content %}
-    <form method="post" class="form">
+    <form method="post" class="space-y-4" id="registration-form">
         {% csrf_token %}
-        <div class="form-group">
-            <label for="id_username">Username:</label>
-            <input type="text" name="username" id="id_username" class="form-control" required>
+        <div>
+            <label for="id_username" class="block text-sm font-medium text-gray-700">Username:</label>
+            <input type="text" name="username" id="id_username" class="mt-1 block px-3 h-8 w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50" required>
+            <p id="username-error" class="text-red-600 text-sm mt-1 {% if form.username.errors %}{{ '' }}{% else %}hidden{% endif %}">
+                {{ form.username.errors|first }}
+            </p>
         </div>
-        <div class="form-group">
-            <label for="id_password">Password:</label>
-            <input type="password" name="password" id="id_password" class="form-control" required>
+        <div>
+            <label for="id_email" class="block text-sm font-medium text-gray-700">Email:</label>
+            <input type="email" name="email" id="id_email" class="mt-1 px-3 block w-full h-8 border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50" required>
+            <p id="email-error" class="text-red-600 text-sm mt-1 {% if form.email.errors %}{{ '' }}{% else %}hidden{% endif %}">
+                {{ form.email.errors|first }}
+            </p>
         </div>
-        <div class="form-group">
-            <label for="id_confirm_password">Confirm Password:</label>
-            <input type="password" name="confirm_password" id="id_confirm_password" class="form-control" required>
+        <div>
+            <label for="id_password" class="block text-sm font-medium text-gray-700">Password:</label>
+            <input type="password" name="password1" id="id_password" class="mt-1 px-3 block w-full h-8 border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50" required autocomplete="new-password">
+            <div class="bg-gray-50 rounded-lg shadow-inner px-4 py-1 mt-2">
+                <ul id="password-suggestions" class="mt-2 text-xs text-gray-500 list-disc pl-5">
+                    <li class="suggestion-item">At least 8 characters long</li>
+                    <li class="suggestion-item">Includes at least one uppercase letter</li>
+                    <li class="suggestion-item">Includes at least one lowercase letter</li>
+                    <li class="suggestion-item">Includes at least one number</li>
+                    <li class="suggestion-item">Includes at least one special character (e.g., @$!%*?&)</li>
+                </ul>
+                <p id="password-error" class="text-red-600 text-sm mt-1 {% if form.password1.errors %}{{ '' }}{% else %}hidden{% endif %}">
+                    {{ form.password1.errors|first }}
+                </p>
+            </div>
         </div>
-        <button type="submit" class="btn btn-success btn-block mt-3">Register</button>
+        <div>
+            <label for="id_confirm_password" class="block text-sm font-medium text-gray-700">Confirm Password:</label>
+            <input type="password" name="password2" id="id_confirm_password" class="mt-1 px-3 block w-full h-8 border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50" required autocomplete="new-password">
+            <p id="confirm-password-error" class="text-red-600 text-sm mt-1 {% if form.password2.errors %}{{ '' }}{% else %}hidden{% endif %}">
+                {{ form.password2.errors|first }}
+            </p>
+        </div>
+        <button type="submit" id="submit-button" class="w-full bg-green-600 text-white font-bold py-2 rounded-md hover:bg-green-500 transition duration-200" >Register</button>
     </form>
 {% endblock %}
-			
+
+
+{% block script %}
+<script>
+    const form = document.getElementById('registration-form');
+    const passwordInput = document.getElementById('id_password');
+    const confirmPasswordInput = document.getElementById('id_confirm_password');
+    const suggestions = document.querySelectorAll('.suggestion-item');
+    const emailInput = document.getElementById('id_email');
+
+    // Function to validate password
+    function validatePassword() {
+        const password = passwordInput.value;
+        const confirmPassword = confirmPasswordInput.value;
+        const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+        suggestions.forEach(suggestion => suggestion.classList.remove('hidden'));
+
+        if (password.length >= 8) {
+            suggestions[0].classList.add('hidden');
+        }
+        else{
+            suggestions[0].classList.add('text-red-600');
+            suggestions[0].classList.remove('hidden');
+        }
+
+        // Check for uppercase letters
+        if (/[A-Z]/.test(password)) {
+            suggestions[1].classList.add('hidden');
+        }
+        else{
+            suggestions[1].classList.add('text-red-600');
+            suggestions[1].classList.remove('hidden');
+        }
+
+        // Check for lowercase letters
+        if (/[a-z]/.test(password)) {
+            suggestions[2].classList.add('hidden');
+        }
+        else{
+            suggestions[2].classList.add('text-red-600');
+            suggestions[2].classList.remove('hidden');
+        }
+
+        // Check for numbers
+        if (/\d/.test(password)) {
+            suggestions[3].classList.add('hidden');
+        }
+        else{
+            suggestions[3].classList.add('text-red-600');
+            suggestions[3].classList.remove('hidden');
+        }
+
+        // Check for special characters
+        if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+            suggestions[4].classList.add('hidden');
+        }
+        else{
+            suggestions[4].classList.add('text-red-600');
+            suggestions[4].classList.remove('hidden');
+        }
+
+        // Validate password confirmation
+        const confirmPasswordError = document.getElementById('confirm-password-error');
+        if (password !== confirmPassword) {
+            confirmPasswordError.innerText = "Passwords do not match!";
+            confirmPasswordError.classList.remove('hidden');
+        } else {
+            confirmPasswordError.classList.add('hidden');
+        }
+    }
+    // Listen for input events on the password fields
+
+    function validateEmail()
+    {
+        const email = emailInput.value;
+        const emailPattern = /^[a-z\d]{3,}@[a-z]{3,}\.[a-z]{2,}$/;
+        const emailError = document.getElementById('email-error');
+        if(!(/(?=.*@)/.test(email)))
+        {
+            emailError.innerText = "Missing @";
+            emailError.classList.remove('hidden');
+        }
+        else if(emailPattern.test(email)){
+            emailError.classList.add('hidden');
+        }
+        else{
+            emailError.innerText = "Invalid Email";
+            emailError.classList.remove('hidden');
+        }
+
+
+    }
+    passwordInput.addEventListener('input', validatePassword);
+    confirmPasswordInput.addEventListener('input', validatePassword);
+
+    emailInput.addEventListener('input',validateEmail);
+    // Form submission validation
+    form.addEventListener('submit', function(event) {
+        // Clear previous error messages
+        document.getElementById('username-error').classList.add('hidden');
+        document.getElementById('email-error').classList.add('hidden');
+        document.getElementById('password-error').classList.add('hidden');
+
+        const username = document.getElementById('id_username').value;
+        let hasError = false;
+
+        // Validate username
+        if (username.trim() === "") {
+            document.getElementById('username-error').innerText = "Username is required.";
+            document.getElementById('username-error').classList.remove('hidden');
+            hasError = true;
+        }
+
+        // Validate email
+        const email = document.getElementById('id_email').value;
+        if (email.trim() === "") {
+            document.getElementById('email-error').innerText = "Email is required.";
+            document.getElementById('email-error').classList.remove('hidden');
+            hasError = true;
+        }
+
+        // Final validation check for password pattern
+        if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(passwordInput.value)) {
+            document.getElementById('password-error').innerText = "Password must meet the criteria listed above.";
+            document.getElementById('password-error').classList.remove('hidden');
+            hasError = true;
+        }
+
+        if (hasError) {
+            event.preventDefault(); // Prevent form submission
+        }
+    });
+</script>
+
+{% endblock %}

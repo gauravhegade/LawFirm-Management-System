@@ -1,82 +1,41 @@
 from django.shortcuts import render
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .forms import UserRegisterForm,DocumentForm
+from .forms import UserRegisterForm,DocumentForm, LoginForm
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.forms import UserCreationForm
-from .models import Lawyer, Case, Client
+from django.contrib.auth import authenticate, login
+from .models import Lawyer, Case, Client, CustomUser
 import pandas as pd
 from django.http import JsonResponse,HttpResponse
 from django import forms
 from .preprocessing import preprocess_input
 
 import pymongo
-"""def login_user(request):
-	if request.method == "POST":
-		username = request.POST['username']
-		password = request.POST['password']
-		user = authenticate(request, username=username, password=password)
-		if user is not None:
-			login(request, user)
-			return redirect('home')
-		else:
-			messages.success(request, ("There Was An Error Logging In, Try Again..."))	
-			return redirect('login')	
 
+def info(request):
+    if request.method == "GET":
+        return render(request,'info.html')
 
-	else:
-		return render(request, 'login.html', {})"""
 def login_user(request):
-    if request.method == "POST":
-        username = request.POST['username']
-        password = request.POST['password']
-
-        # Check if the provided username exists in the Lawyer model
-        try:
-            lawyer_instance = Lawyer.objects.get(lawyer_name=username)
-        except Lawyer.DoesNotExist:
-            lawyer_instance = None
-
-        # Check if the provided username exists in the Client model
-        try:
-            client_instance = Client.objects.get(client_name=username)
-        except Client.DoesNotExist:
-            client_instance = None
-
-        if lawyer_instance:
-            # Access cases and clients associated with the lawyer
-            lawyer_id = lawyer_instance.lawyer_id
-            cases = Case.objects.filter(lawyer_id=lawyer_id)
-            clients = Client.objects.filter(case__in=cases)
-
-            # Pass data to the template for lawyer
-            context = {
-                'lawyer_instance': lawyer_instance,
-                'cases': cases,
-                'clients': clients,
-            }
-            return render(request, 'lawyer_dashboard.html', context)
-
-        elif client_instance:
-            # Access cases associated with the client
-            client_id = client_instance.client_id
-            cases = Case.objects.filter(client_id=client_id)
-
-            # Pass data to the template for client
-            context = {
-                'client_instance': client_instance,
-                'cases': cases,
-            }
-            return render(request, 'client_dashboard.html', context)
-
+    if request.method == 'POST':
+        form = LoginForm(request, data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            print(username,password)
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return HttpResponse(f"Welcome {username}")  # Redirect to a dashboard or home page after login
+            else:
+                messages.error(request, "Invalid username or password.")
         else:
-            messages.success(request, "Invalid username or password. Try again.")
-            return redirect('/')
-
+            messages.error(request, "Invalid login details.")
     else:
-        return render(request, 'login.html', {})
-
+        form = LoginForm()
+    
+    return render(request, 'login.html', {'form': form})
+   
 def register(request):
     if request.method == 'POST':
         form = UserRegisterForm(request.POST)
@@ -84,7 +43,11 @@ def register(request):
             form.save()
             username = form.cleaned_data.get('username')
             messages.success(request, f'Account created for {username}!')
-            return redirect('login')
+            return redirect('/')
+        else:
+            messages.info(request,f'Account creation failed')
+            #print(form.data.get('username'),form.data.get('email') , form.data.get('password1'))
+    
     else:
         form = UserRegisterForm()
     return render(request, 'register.html', {'form': form})

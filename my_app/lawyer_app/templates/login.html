@@ -1,44 +1,75 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-    <!-- Include any additional styling or CSS frameworks you prefer -->
-</head>
-<body>
+{% extends 'base.html' %}
+{% block header %}Login{% endblock %}
 
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header">
-                        <h2 class="text-center">Login</h2>
-                    </div>
-                    <div class="card-body">
-                        <form action="" method="POST">
+{% block content %}
+    <div class="container mx-auto">
+        <div class="flex justify-center">
+            <div class="w-full max-w-md">
+                        <form method="post" class="space-y-4" id="login-form">
                             {% csrf_token %}
-                            <div class="form-group">
-                                <label for="id_username">Username:</label>
-                                <input type="text" name="username" id="id_username" class="form-control" required>
+                            <div>
+                                <label for="id_username" class="block text-sm font-medium text-gray-700">Username:</label>
+                                <input type="text" name="username" id="id_username" class="mt-1 block px-3 h-8 w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50" required>
+                                <p id="username-error" class="text-red-600 text-sm mt-1 hidden"></p>
                             </div>
-                            <div class="form-group">
-                                <label for="id_password">Password:</label>
-                                <input type="password" name="password" id="id_password" class="form-control" required>
+                            <div>
+                                <label for="id_password" class="block text-sm font-medium text-gray-700">Password:</label>
+                                <input type="password" name="password" id="id_password" class="mt-1 px-3 block w-full h-8 border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-100 transition duration-200" required autocomplete="new-password">
+                                <p id="password-error" class="text-red-600 text-sm mt-1 hidden"></p>
                             </div>
-                            <button type="submit" class="btn btn-primary btn-block">Login</button>
+                            {% if form.non_field_errors %}
+                                <p id="login-error" class="text-red-600 text-sm mt-1">{{ form.non_field_errors|first }}</p>
+                            {% endif %}
+
+                            <button type="submit" id="login-button" class="w-full bg-gray-600 text-white font-bold py-2 rounded-md hover:bg-green-500 transition duration-200">Login</button>
                         </form>
-                    </div>
-                </div>
+
             </div>
         </div>
     </div>
+{% endblock %}
 
-<!-- Include any additional scripts or JavaScript frameworks you prefer -->
+{% block script %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const passwordInput = document.getElementById('id_password');
+        const usernameInput = document.getElementById('id_username');
+        const loginButton = document.getElementById('login-button');
 
-</body>
-</html>
+        function updateButtonState() {
+            const isUsernameFilled = usernameInput.value.trim() !== '';
+            const isPasswordValid = passwordInput.value.length >= 8;
 
-	
+            // Change button color based on conditions
+            if (!isUsernameFilled || !isPasswordValid) {
+                loginButton.classList.remove('bg-green-600', 'hover:bg-green-500');
+                loginButton.classList.add('bg-gray-600', 'hover:bg-gray-500');
+            } else {
+                loginButton.classList.remove('bg-gray-600', 'hover:bg-gray-500');
+                loginButton.classList.add('bg-green-600', 'hover:bg-green-500');
+            }
+        }
+
+        // Initial check for button state
+        updateButtonState();
+
+        // Event listeners for input changes
+        usernameInput.addEventListener('input', updateButtonState);
+        passwordInput.addEventListener('input', function() {
+            // Remove any previous ring classes
+            passwordInput.classList.remove('ring-red-900', 'ring-green-800', 'ring-3');
+
+            // Add ring effect based on password length
+            if (passwordInput.value.length < 8) {
+                passwordInput.classList.remove('ring-green-800', 'ring-3');
+                passwordInput.classList.add('ring-red-900', 'ring-3');
+            } else {
+                passwordInput.classList.remove('ring-red-900', 'ring-3');
+                passwordInput.classList.add('ring-green-800', 'ring-3');
+            }
+
+            updateButtonState();
+        });
+    });
+</script>
+{% endblock %}
