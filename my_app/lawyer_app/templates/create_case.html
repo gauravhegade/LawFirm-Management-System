@@ -1,0 +1,68 @@
+{% extends 'base_create.html' %}
+
+{% block content %}
+    {% include 'nav_bar.html' %}
+    
+    <div class="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-lg relative">
+        <h2 class="text-2xl font-bold mb-6 text-center">Create a New Case</h2>
+        <form method="POST" class="space-y-4">
+            {% csrf_token %}
+            <div class="mb-4">
+                <label for="client" class="block text-sm font-medium text-gray-700">Client</label>
+                <div class="relative">
+                    <input type="text" id="client-search" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-500 transition duration-200 px-2" placeholder="Search for a client..." autocomplete="off">
+                    <div id="client-dropdown" class="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg hidden"></div>
+                </div>
+                <input type="hidden" name="client" id="client-id">
+            </div>
+
+            <div class="mb-4">
+                <label for="case_name" class="block text-sm font-medium text-gray-700">Case Name</label>
+                <input type="text" name="case_name" id="case_name" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-500 transition duration-200 px-2" required>
+            </div>
+
+            <div class="mb-4">
+                <label for="case_description" class="block text-sm font-medium text-gray-700">Case Description</label>
+                <textarea name="case_description" id="case_description" rows="4" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-500 transition duration-200 px-2" required></textarea>
+            </div>
+
+            <button type="submit" class="w-full bg-blue-600 text-white rounded-md py-2 hover:bg-blue-700 transition duration-200">Create Case</button>
+        </form>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $('#client-search').on('keyup', function() {
+                let query = $(this).val();
+                if (query.length > 1) { 
+                    $.ajax({
+                        url: "{% url 'lawyer_app:search_clients' %}",
+                        data: {
+                            'query': query
+                        },
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#client-dropdown').empty().removeClass('hidden');
+                            if (data.length) {
+                                data.forEach(function(client) {
+                                    $('#client-dropdown').append(`<div class="dropdown-item cursor-pointer hover:bg-gray-200 p-2" data-id="${client.id}">${client.name}</div>`);
+                                });
+                            } else {
+                                $('#client-dropdown').append(`<div class="dropdown-item p-2">No clients found</div>`);
+                            }
+                        }
+                    });
+                } else {
+                    $('#client-dropdown').addClass('hidden'); 
+                }
+            });
+    
+            // Handle selecting a client
+            $(document).on('click', '.dropdown-item', function() {
+                $('#client-search').val($(this).text());
+                $('#client-id').val($(this).data('id')); 
+                $('#client-dropdown').addClass('hidden'); 
+            });
+        });
+    </script>
+{% endblock %}

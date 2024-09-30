@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}{{message_title}}{% endblock %}
+
+{% block header %}{{message_title}}{% endblock %}
+
+{% block content %}
+    <div class="text-center">
+        <h3 class="text-lg font-semibold mb-4 italic">{{ message_head }}</h3>
+        <h4 class="text-lg font-semibold mb-4">{{ message_body }}</h4>
+        <p>Please check your email for further instructions.</p>
+        <a href="{% url 'lawyer_app:login' %}" class="mt-4 inline-block bg-blue-600 text-white px-4 py-2 rounded">Log In</a>
+    </div>
+{% endblock %}

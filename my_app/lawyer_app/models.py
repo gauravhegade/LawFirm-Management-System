@@ -9,6 +9,8 @@ class CustomUser(AbstractUser):
         max_length=254,
         unique=True
     )
+    
+
 
 class Lawyer(models.Model):
     lawyer_id = models.AutoField(primary_key=True)
@@ -73,9 +75,10 @@ class Client(models.Model):
 
 class Case(models.Model):
     case_id = models.AutoField(primary_key=True)
-    lawyer= models.ForeignKey(Lawyer, on_delete=models.CASCADE)
-    client= models.ForeignKey(Client, on_delete=models.CASCADE)
+    lawyer = models.ForeignKey(Lawyer, on_delete=models.CASCADE, related_name='cases')
+    client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='cases')
     case_name = models.CharField(max_length=255)
+    case_description = models.TextField(max_length=1000)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -84,7 +87,14 @@ class Case(models.Model):
 class Document(models.Model):
     document_id = models.AutoField(primary_key=True)
     case = models.ForeignKey(Case, on_delete = models.CASCADE)
-    document_type= models.CharField(max_length = 100)
+
+    DOCUMENT_TYPE_CHOICES = [
+        ('brief', 'Brief'),
+        ('contract', 'Contract'),
+        ('memo', 'Memo'),
+    ]
+    document_type = models.CharField(max_length=100, choices=DOCUMENT_TYPE_CHOICES)
+
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

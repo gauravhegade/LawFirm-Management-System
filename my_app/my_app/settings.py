@@ -56,6 +56,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'lawyer_app.middleware.NoCacheMiddleware',
 ]
 
 ROOT_URLCONF = 'my_app.urls'
@@ -147,3 +148,25 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+
+#SESSION_COOKIE_AGE = 60*60
+
+
+
+GMAIL_PORT=os.getenv('GMAIL_PORT')
+GMAIL_HOST=os.getenv('GMAIL_HOST')
+GMAIL_USE_TLS=os.getenv('GMAIL_USE_TLS',True)
+GMAIL_HOST_USER=os.getenv('GMAIL_HOST_USER')
+GMAIL_HOST_PASSWORD=os.getenv('GMAIL_HOST_PASSWORD')
+GMAIL_FROM_EMAIL=os.getenv('GMAIL_FROM_EMAIL')
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = GMAIL_HOST
+EMAIL_PORT = GMAIL_PORT
+EMAIL_USE_TLS = GMAIL_USE_TLS
+EMAIL_HOST_USER = GMAIL_HOST_USER
+EMAIL_HOST_PASSWORD = GMAIL_HOST_PASSWORD
+DEFAULT_FROM_EMAIL = GMAIL_FROM_EMAIL
+
+SITE_URL=os.getenv('SITE_URL','http://localhost:8000')

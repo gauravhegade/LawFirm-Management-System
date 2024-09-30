@@ -1,6 +1,6 @@
 from django import forms
 #from django.contrib.auth.models import User
-from .models import CustomUser, Lawyer,Client
+from .models import CustomUser, Lawyer,Client,Case
 from django.contrib.auth.forms import UserCreationForm,AuthenticationForm
 from django.core.exceptions import ValidationError
 import re
@@ -8,14 +8,18 @@ import re
 
 class UserRegisterForm(UserCreationForm):
     email = forms.EmailField(required=True)
+    first_name = forms.CharField(max_length=30, required=True)  
+    last_name = forms.CharField(max_length=30, required=True)   
+    
     ROLE_CHOICES = [
         ('lawyer', 'Lawyer'),
         ('client', 'Client'),
     ]
     role = forms.ChoiceField(choices=ROLE_CHOICES, required=True)
+
     class Meta:
         model = CustomUser
-        fields = ['username', 'email', 'password1', 'password2','role']
+        fields = ['username', 'email', 'password1', 'password2', 'role', 'first_name', 'last_name']
 
 class LoginForm(AuthenticationForm):
     username = forms.CharField(
@@ -58,3 +62,8 @@ class ClientProfileForm(forms.ModelForm):
         if not re.match(phone_pattern, mobile_number):
             raise ValidationError("Invalid mobile number format. It should be in the format '+123456789'.")
         return mobile_number
+    
+class CaseForm(forms.ModelForm):
+    class Meta:
+        model = Case
+        fields = ['client', 'case_name', 'case_description']

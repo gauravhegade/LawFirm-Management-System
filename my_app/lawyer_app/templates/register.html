@@ -4,6 +4,18 @@
 {% block content %}
     <form method="post" class="space-y-4" id="registration-form">
         {% csrf_token %}
+        <div class="flex space-x-4">
+            <div class="flex-1">
+                <label for="id_first_name" class="block text-sm font-medium text-gray-700">First Name:</label>
+                <input type="text" name="first_name" id="id_first_name" class="mt-1 block px-3 h-8 w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50" required>
+                <p id="first-name-error" class="text-red-600 text-sm mt-1 hidden"></p>
+            </div>
+            <div class="flex-1">
+                <label for="id_last_name" class="block text-sm font-medium text-gray-700">Last Name:</label>
+                <input type="text" name="last_name" id="id_last_name" class="mt-1 block px-3 h-8 w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50" required>
+                <p id="last-name-error" class="text-red-600 text-sm mt-1 hidden"></p>
+            </div>
+        </div>
         <div>
             <label for="id_username" class="block text-sm font-medium text-gray-700">Username:</label>
             <input type="text" name="username" id="id_username" class="mt-1 block px-3 h-8 w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50" required>
@@ -50,10 +62,9 @@
                 {{ form.password2.errors|first }}
             </p>
         </div>
-        <button type="submit" id="submit-button" class="w-full bg-green-600 text-white font-bold py-2 rounded-md hover:bg-green-500 transition duration-200" >Register</button>
+        <button type="submit" id="submit-button" class="w-full bg-green-600 text-white font-bold py-2 rounded-md hover:bg-green-500 transition duration-200">Register</button>
     </form>
 {% endblock %}
-
 
 {% block script %}
 <script>
@@ -62,6 +73,8 @@
     const confirmPasswordInput = document.getElementById('id_confirm_password');
     const suggestions = document.querySelectorAll('.suggestion-item');
     const emailInput = document.getElementById('id_email');
+    const firstNameInput = document.getElementById('id_first_name');
+    const lastNameInput = document.getElementById('id_last_name');
 
     // Function to validate password
     function validatePassword() {
@@ -73,8 +86,7 @@
 
         if (password.length >= 8) {
             suggestions[0].classList.add('hidden');
-        }
-        else{
+        } else {
             suggestions[0].classList.add('text-red-600');
             suggestions[0].classList.remove('hidden');
         }
@@ -82,8 +94,7 @@
         // Check for uppercase letters
         if (/[A-Z]/.test(password)) {
             suggestions[1].classList.add('hidden');
-        }
-        else{
+        } else {
             suggestions[1].classList.add('text-red-600');
             suggestions[1].classList.remove('hidden');
         }
@@ -91,8 +102,7 @@
         // Check for lowercase letters
         if (/[a-z]/.test(password)) {
             suggestions[2].classList.add('hidden');
-        }
-        else{
+        } else {
             suggestions[2].classList.add('text-red-600');
             suggestions[2].classList.remove('hidden');
         }
@@ -100,8 +110,7 @@
         // Check for numbers
         if (/\d/.test(password)) {
             suggestions[3].classList.add('hidden');
-        }
-        else{
+        } else {
             suggestions[3].classList.add('text-red-600');
             suggestions[3].classList.remove('hidden');
         }
@@ -109,8 +118,7 @@
         // Check for special characters
         if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
             suggestions[4].classList.add('hidden');
-        }
-        else{
+        } else {
             suggestions[4].classList.add('text-red-600');
             suggestions[4].classList.remove('hidden');
         }
@@ -124,40 +132,74 @@
             confirmPasswordError.classList.add('hidden');
         }
     }
-    // Listen for input events on the password fields
 
-    function validateEmail()
-    {
+    // Function to validate email
+    function validateEmail() {
         const email = emailInput.value;
-        const emailPattern = /^[a-z\d]{3,}@[a-z]{3,}\.[a-z]{2,}$/;
+        const emailPattern = /^[a-z\d.]{3,}@[a-z]{3,}\.[a-z]{2,}$/;
         const emailError = document.getElementById('email-error');
-        if(!(/(?=.*@)/.test(email)))
-        {
+        if (!(/(?=.*@)/.test(email))) {
             emailError.innerText = "Missing @";
             emailError.classList.remove('hidden');
-        }
-        else if(emailPattern.test(email)){
+        } else if (emailPattern.test(email)) {
             emailError.classList.add('hidden');
-        }
-        else{
+        } else {
             emailError.innerText = "Invalid Email";
             emailError.classList.remove('hidden');
         }
-
-
     }
+
+    // Validate first and last name
+    function validateName() {
+        const firstNameError = document.getElementById('first-name-error');
+        const lastNameError = document.getElementById('last-name-error');
+        
+        if (firstNameInput.value.trim() === "") {
+            firstNameError.innerText = "First name is required.";
+            firstNameError.classList.remove('hidden');
+        } else {
+            firstNameError.classList.add('hidden');
+        }
+
+        if (lastNameInput.value.trim() === "") {
+            lastNameError.innerText = "Last name is required.";
+            lastNameError.classList.remove('hidden');
+        } else {
+            lastNameError.classList.add('hidden');
+        }
+    }
+
+    // Listen for input events on the password fields
     passwordInput.addEventListener('input', validatePassword);
     confirmPasswordInput.addEventListener('input', validatePassword);
+    emailInput.addEventListener('input', validateEmail);
+    firstNameInput.addEventListener('input', validateName);
+    lastNameInput.addEventListener('input', validateName);
 
-    emailInput.addEventListener('input',validateEmail);
     form.addEventListener('submit', function(event) {
         // Clear previous error messages
         document.getElementById('username-error').classList.add('hidden');
         document.getElementById('email-error').classList.add('hidden');
         document.getElementById('password-error').classList.add('hidden');
+        document.getElementById('first-name-error').classList.add('hidden');
+        document.getElementById('last-name-error').classList.add('hidden');
 
         const username = document.getElementById('id_username').value;
         let hasError = false;
+
+        // Validate first name
+        if (firstNameInput.value.trim() === "") {
+            document.getElementById('first-name-error').innerText = "First name is required.";
+            document.getElementById('first-name-error').classList.remove('hidden');
+            hasError = true;
+        }
+
+        // Validate last name
+        if (lastNameInput.value.trim() === "") {
+            document.getElementById('last-name-error').innerText = "Last name is required.";
+            document.getElementById('last-name-error').classList.remove('hidden');
+            hasError = true;
+        }
 
         // Validate username
         if (username.trim() === "") {
@@ -167,8 +209,8 @@
         }
 
         // Validate email
-        const email = document.getElementById('id_email').value;
-        if (email.trim() === "") {
+        
+        if (!/^[a-z\d.]{3,}@[a-z]{3,}\.[a-z]{2,}$/.test(emailInput.value)) {
             document.getElementById('email-error').innerText = "Email is required.";
             document.getElementById('email-error').classList.remove('hidden');
             hasError = true;
