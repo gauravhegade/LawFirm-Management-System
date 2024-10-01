@@ -1,0 +1,12 @@
+<!-- 500.html -->
+{% extends 'base.html' %}
+
+{% block title %}500 Internal Server Error{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1 class="text-3xl font-bold">500 - Internal Server Error</h1>
+        <p class="mt-4 mb-2">Oops! Something went wrong on our side. Please try again later or contact support.</p>
+        <a href="{% url 'lawyer_app:home' %}" class="text-blue-600 hover:underline text-sm mb-0">Go back to the homepage</a>
+    </div>
+{% endblock %}

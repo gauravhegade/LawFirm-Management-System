@@ -277,6 +277,13 @@ def case_status(request):
     return render(request, 'case_status.html', context)
 
 
+def page_not_found(request, exception):
+    return render(request, 'errors/404.html', status=404)
+
+
+def server_error(request):
+    return render(request, 'errors/500.html', status=500)
+
 def predict(request):
     return render(request,"predict.html")
 # Create your views here.

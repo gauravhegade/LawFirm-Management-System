@@ -1,7 +1,11 @@
 from django.urls import path
 from . import views
 
+
+
+
 app_name = 'lawyer_app'
+
 urlpatterns = [
     path('', views.info ,name='home'),
     path('login/', views.login_user, name='login'),
@@ -34,3 +38,4 @@ urlpatterns = [
     path('submit_prediction/', views.predict_chances, name='submit_prediction'),
     path('documents/',views.index,name='documents')
 ]
+

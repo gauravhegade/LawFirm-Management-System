@@ -16,11 +16,14 @@ Including another URLconf
 """
 from lawyer_app import admin
 from django.urls import path,include
+from django.conf.urls import ( handler404, handler500 )
 
-
+from lawyer_app.views import page_not_found,server_error
 app_name ='lawyer_app'
 urlpatterns = [
     path('admin/', admin.site.urls),
     
     path('', include('lawyer_app.urls')),
 ]
+handler404 = page_not_found
+handler500 = server_error
