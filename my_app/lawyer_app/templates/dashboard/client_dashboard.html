@@ -1,0 +1,120 @@
+{% extends 'base_create.html' %}
+{% block style %} 
+<style>
+    .navbar {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+    }
+    .profile-box {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+    .section-box {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+    .fixed-buttons {
+        position: fixed;
+        top: 20%;
+        right: 2%;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        padding: 1rem;
+        z-index: 10;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+{% include 'nav_bar.html' %}
+    <div class="min-h-screen flex flex-col items-center p-6">
+        <!-- Client Profile Section -->
+        <div class="profile-box p-6 w-full max-w-3xl mb-8">
+            <h2 class="text-2xl font-bold mb-4">Welcome, {{ client.user.get_full_name }}</h2>
+            <h3 class="text-lg font-semibold">Your Details</h3>
+            <p><strong>Address:</strong> {{ client.address }}</p>
+            <p><strong>Mobile Number:</strong> {{ client.mobile_number }}</p>
+            <p><strong>Profile Completion:</strong> {{ client.profile_complete|yesno:"Complete,Incomplete" }}</p>
+        </div>
+
+        <!-- Current Lawyers Section -->
+        <div class="section-box p-6 w-full max-w-3xl mb-8">
+            <h3 class="text-lg font-semibold mb-4">Current Lawyers</h3>
+            {% if current_lawyers %}
+                <ul class="list-disc pl-5">
+                    {% for lawyer in current_lawyers %}
+                        <li>
+                            <a href="{% url 'lawyer_app:lawyer_profile' lawyer.lawyer_id %}" class="text-blue-600 hover:underline">
+                                {{ lawyer.user.get_full_name }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="text-gray-500">You have no active lawyers assigned yet.</p>
+            {% endif %}
+        </div>
+
+        <!-- Past Lawyers Section -->
+        <div class="section-box p-6 w-full max-w-3xl mb-8">
+            <h3 class="text-lg font-semibold mb-4">Past Lawyers</h3>
+            {% if past_lawyers %}
+                <ul class="list-disc pl-5">
+                    {% for lawyer in past_lawyers %}
+                        <li>
+                            <a href="{% url 'lawyer_app:lawyer_profile' lawyer.lawyer_id %}" class="text-blue-600 hover:underline">
+                                {{ lawyer.user.get_full_name }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="text-gray-500">You have no past lawyers assigned yet.</p>
+            {% endif %}
+        </div>
+
+        <!-- Active Cases Section -->
+        <div class="section-box p-6 w-full max-w-3xl mb-8">
+            <h3 class="text-lg font-semibold mb-4">Active Cases</h3>
+            {% if active_cases %}
+                <ul class="list-disc pl-5">
+                    {% for case in active_cases %}
+                        <li>
+                            <strong>{{ case.case_name }}</strong> - 
+                            <span>Created on: {{ case.created_at }}</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="text-gray-500">You have no active cases.</p>
+            {% endif %}
+        </div>
+
+        <!-- Past Cases Section -->
+        <div class="section-box p-6 w-full max-w-3xl mb-8">
+            <h3 class="text-lg font-semibold mb-4">Past Cases</h3>
+            {% if past_cases %}
+                <ul class="list-disc pl-5">
+                    {% for case in past_cases %}
+                        <li>
+                            <strong>{{ case.case_name }}</strong> - 
+                            <span>Created on: {{ case.created_at }}</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="text-gray-500">You have no past cases.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Document Upload Section -->
+    <div class="fixed-buttons">
+        <a href="" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 block text-center flex items-center">
+            <i class="fas fa-file-upload mr-2"></i> Upload Document
+        </a>
+    </div>
+{% endblock %}

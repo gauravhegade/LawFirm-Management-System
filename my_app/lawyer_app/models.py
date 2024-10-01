@@ -81,6 +81,8 @@ class Case(models.Model):
     case_description = models.TextField(max_length=1000)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    is_active = models.BooleanField(default=True)
+
     def __str__(self):
         return self.case_name
 

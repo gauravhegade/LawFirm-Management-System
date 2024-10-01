@@ -57,7 +57,7 @@ def login_user(request):
                             messages.info(request, 'Please complete your client profile.')
                             return redirect('/client/complete-profile') 
                         else:
-                            return redirect('/login') 
+                            return redirect('/client/dashboard') 
                     
 
                 else:
@@ -67,7 +67,7 @@ def login_user(request):
         else:
             form.add_error(None,'Invalid username or password.')
             messages.error(request, 'Please correct the errors below.')
-        print(form.non_field_errors().as_json())
+        #print(form.non_field_errors().as_json())
     else:
         form = LoginForm()
     
@@ -106,7 +106,7 @@ def register(request):
 
 
 def complete_lawyer_profile(request):
-    lawyer_profile = request.user.lawyer_profile  # Get lawyer profile for current user
+    lawyer_profile = request.user.lawyer_profile 
     if request.method == 'POST':
         form = LawyerProfileForm(request.POST, instance=lawyer_profile)
         if form.is_valid():
@@ -114,15 +114,15 @@ def complete_lawyer_profile(request):
             lawyer_profile.profile_complete = True  # Mark profile as complete
             lawyer_profile.save()
             messages.success(request, 'Lawyer profile updated successfully.')
-            return redirect('/login')  # Redirect to dashboard after completion
+            return redirect('/logout')  
     else:
         form = LawyerProfileForm(instance=lawyer_profile)
     
-    return render(request, 'complete_lawyer_profile.html', {'form': form})
+    return render(request, 'profile_completion/complete_lawyer_profile.html', {'form': form})
 
 @login_required
 def complete_client_profile(request):
-    client_profile = request.user.client_profile  # Get client profile for current user
+    client_profile = request.user.client_profile
     if request.method == 'POST':
         form = ClientProfileForm(request.POST, instance=client_profile)
         if form.is_valid():
@@ -130,11 +130,11 @@ def complete_client_profile(request):
             client_profile.profile_complete = True  # Mark profile as complete
             client_profile.save()
             messages.success(request, 'Client profile updated successfully.')
-            return redirect('/login')  # Redirect to dashboard after completion
+            return redirect('/logout')  
     else:
         form = ClientProfileForm(instance=client_profile)
     
-    return render(request, 'complete_client_profile.html', {'form': form})
+    return render(request, 'profile_completion/complete_client_profile.html', {'form': form})
 
 @login_required
 def lawyer_dashboard(request):
@@ -144,20 +144,26 @@ def lawyer_dashboard(request):
 
     clients = Client.objects.filter(cases__lawyer=lawyer).distinct()  
 
-    print(clients)
-
     context = {
         'lawyer': lawyer,
         'clients': clients,
         'cases': cases,  
     }
 
-    return render(request, 'lawyer_dashboard.html', context)
+    return render(request, 'dashboard/lawyer_dashboard.html', context)
 
 @login_required
 def client_profile(request, client_id):
-    client = Client.objects.get(client_id=client_id)
-    return render(request, 'client_profile.html', {'client': client})
+
+    try:
+        client = Client.objects.get(client_id=client_id)
+    except Client.DoesNotExist:
+        client = None
+    
+    context = { 
+        'client' : client,
+    }
+    return render(request, 'profile/client_profile.html', context)
 
 @login_required
 def logout_user(request):
@@ -179,7 +185,39 @@ def create_case(request):
     
     return render(request, 'create_case.html', {'form': form})
 
+@login_required
+def client_dashboard(request):
+    client = request.user.client_profile
 
+    active_cases = Case.objects.filter(client=client, is_active=True)
+    past_cases = Case.objects.filter(client=client, is_active=False)
+    
+    current_lawyers = Lawyer.objects.filter(cases__client=client, cases__is_active=True).distinct()
+
+    past_lawyers = Lawyer.objects.filter(cases__client=client, cases__is_active=False).distinct()
+    
+    context = {
+        'client': client,
+        'active_cases': active_cases,
+        'past_cases': past_cases,
+        'current_lawyers': current_lawyers,
+        'past_lawyers': past_lawyers,
+    }
+    
+    return render(request, 'dashboard/client_dashboard.html', context)
+
+@login_required
+def lawyer_profile(request, lawyer_id):
+    try:
+        lawyer = Lawyer.objects.get(lawyer_id=lawyer_id)
+    except Lawyer.DoesNotExist:
+        lawyer = None
+    
+    context = {
+        'lawyer': lawyer,
+    }
+    
+    return render(request, 'profile/lawyer_profile.html', context)
 
 '''
 def lawyer_dashboard(request, lawyer_id):

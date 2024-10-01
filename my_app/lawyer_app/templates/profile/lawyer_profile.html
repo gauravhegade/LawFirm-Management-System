@@ -1,0 +1,31 @@
+{% extends 'base_create.html' %}
+{% block title %}{{lawyer.user.get_full_name}}'s Profile' {% endblock %}
+{% block style %} 
+<style>
+    .navbar {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+    }
+    .profile-box {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+{% include 'nav_bar.html' %}
+    <div class="min-h-screen flex flex-col items-center p-6">
+        <!-- Lawyer Profile Section -->
+        <div class="profile-box p-6 w-full max-w-3xl mb-8">
+            <h2 class="text-2xl font-bold mb-4">{{ lawyer.user.get_full_name }}'s Profile</h2>
+            <h3 class="text-lg font-semibold mb-4">Lawyer Information</h3>
+            <p><strong>Specialization:</strong> {{ lawyer.specialization }}</p>
+            <p><strong>Address:</strong> {{ lawyer.address }}</p>
+            <p><strong>Mobile Number:</strong> {{ lawyer.mobile_number }}</p>
+            <p><strong>Registered At:</strong> {{ lawyer.registered_at }}</p>
+            
+        </div>
+    </div>
+{% endblock %}

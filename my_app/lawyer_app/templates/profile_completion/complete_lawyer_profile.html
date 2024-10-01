@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block title %}Complete Lawyer Profile{% endblock %}
+{% block header %}Complete Your Lawyer Profile{% endblock %}
+
+{% block content %}
+    <form method="post" class="space-y-4" id="lawyer-profile-form">
+        {% csrf_token %}
+        <div>
+            <label for="id_specialization" class="block text-sm font-medium text-gray-700">Specialization:</label>
+            <input type="text" name="specialization" id="id_specialization" value="{{ form.specialization.value }}" class="mt-1 block px-3 h-8 w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50" required>
+            <p id="specialization-error" class="text-red-600 text-sm mt-1 {% if form.specialization.errors %}{{ '' }}{% else %}hidden{% endif %}">
+                {{ form.specialization.errors|first }}
+            </p>
+        </div>
+        <div>
+            <label for="id_address" class="block text-sm font-medium text-gray-700">Address:</label>
+            <textarea name="address" id="id_address" class="mt-1 block px-3 h-24 w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50" required>{{ form.address.value }}</textarea>
+            <p id="address-error" class="text-red-600 text-sm mt-1 {% if form.address.errors %}{{ '' }}{% else %}hidden{% endif %}">
+                {{ form.address.errors|first }}
+            </p>
+        </div>
+        <div>
+            <label for="id_mobile_number" class="block text-sm font-medium text-gray-700">Mobile Number:</label>
+            <input type="text" name="mobile_number" id="id_mobile_number" value="{{ form.mobile_number.value }}" class="mt-1 block px-3 h-8 w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50" required>
+            <p id="mobile-error" class="text-red-600 text-sm mt-1 {% if form.mobile_number.errors %}{{ '' }}{% else %}hidden{% endif %}">
+                {{ form.mobile_number.errors|first }}
+            </p>
+        </div>
+        <button type="submit" id="submit-button" class="w-full bg-green-600 text-white font-bold py-2 rounded-md hover:bg-green-500 transition duration-200">Update Profile</button>
+    </form>
+{% endblock %}
+
+{% block script %}
+<script>
+    const form = document.getElementById('lawyer-profile-form');
+    const mobileInput = document.getElementById('id_mobile_number');
+
+    function validatePhoneNumber(phoneNumber) {
+        const phonePattern = /^\+\d{1,3}\d{9,15}$/;  
+        return phonePattern.test(phoneNumber);
+    }
+
+    form.addEventListener('submit', function(event) {
+        // Clear previous error messages
+        document.getElementById('specialization-error').classList.add('hidden');
+        document.getElementById('address-error').classList.add('hidden');
+        document.getElementById('mobile-error').classList.add('hidden');
+
+        const specialization = document.getElementById('id_specialization').value;
+        const address = document.getElementById('id_address').value;
+        const mobile = mobileInput.value;
+        let hasError = false;
+
+        // Validate specialization
+        if (specialization.trim() === "") {
+            document.getElementById('specialization-error').innerText = "Specialization is required.";
+            document.getElementById('specialization-error').classList.remove('hidden');
+            hasError = true;
+        }
+
+        // Validate address
+        if (address.trim() === "") {
+            document.getElementById('address-error').innerText = "Address is required.";
+            document.getElementById('address-error').classList.remove('hidden');
+            hasError = true;
+        }
+
+        // Validate mobile number
+        if (!validatePhoneNumber(mobile)) {
+            document.getElementById('mobile-error').innerText = "Invalid mobile number. It should be in the format '+123456789'.";
+            document.getElementById('mobile-error').classList.remove('hidden');
+            hasError = true;
+        }
+
+        if (hasError) {
+            event.preventDefault();
+        }
+    });
+</script>
+{% endblock %}
