@@ -1,18 +1,22 @@
 from django.shortcuts import render
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .forms import UserRegisterForm,DocumentForm, LoginForm,ClientProfileForm,LawyerProfileForm , CaseForm
+from django.contrib.auth.decorators import login_required
+from .forms import UserRegisterForm, LoginForm,ClientProfileForm,LawyerProfileForm , CaseForm, DocumentUploadForm
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth import authenticate, login,logout
 from .models import Lawyer, Case, Client, CustomUser
 import pandas as pd
 from django.http import JsonResponse,HttpResponse
-from django.contrib.auth.decorators import login_required
-from django import forms
-from .preprocessing import preprocess_input
+from django.conf import settings
 
-import pymongo
+from .preprocessing import preprocess_input
+from django.core.exceptions import PermissionDenied
+from pymongo import MongoClient
+
+import gridfs
+
 
 def info(request):
     if request.method == "GET":
@@ -33,7 +37,26 @@ def search_clients(request):
         return JsonResponse(results, safe=False)
     else:
         return JsonResponse([], safe=False)
+    
+@login_required
+def search_cases(request):
+    if request.method == 'GET' and request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        query = request.GET.get('query', '')
+        limit = 5
+        cases = None
 
+        if hasattr(request.user, 'lawyer_profile'):
+            cases = Case.objects.filter(lawyer=request.user.lawyer_profile, case_name__icontains=query)
+
+        elif hasattr(request.user, 'client_profile'):
+            cases = Case.objects.filter(client=request.user.client_profile, case_name__icontains=query)
+        
+        if cases is not None:
+            cases = cases.distinct()[:limit]
+            results = [{'id': case.case_id, 'name': case.case_name} for case in cases]
+            return JsonResponse(results, safe=False)
+        
+    return JsonResponse([], safe=False)
 
 def login_user(request):
     if request.method == 'POST':
@@ -106,7 +129,7 @@ def register(request):
         form = UserRegisterForm()
     return render(request, 'register.html', {'form': form})
 
-
+@login_required
 def complete_lawyer_profile(request):
     lawyer_profile = request.user.lawyer_profile 
     if request.method == 'POST':
@@ -317,27 +340,78 @@ def predict_chances(request):
     # Return a default response if the conditions are not met
     return HttpResponse("Invalid request")
 
-# Create your views here.
-def index(request):
-    form = DocumentForm()
+client = MongoClient(settings.MONGO_URL)
+db = client[settings.MONGO_DB]
+fs = gridfs.GridFS(db)
+
+@login_required
+def upload_document(request):
     if request.method == 'POST':
-        form = DocumentForm(request.POST)
+        form = DocumentUploadForm(request.POST, request.FILES)
+
         if form.is_valid():
-            # Connect to MongoDB
-            mongo_client = pymongo.MongoClient('mongodb://localhost:27017/')
-            mongo_db = mongo_client['Document']
+            case = form.cleaned_data['case']
 
-            # Insert document into MongoDB collection
-            document_data = {
-                "document_id": form.cleaned_data['document_id'],
-                "document_type": form.cleaned_data['document_type'],
-                "case_id": form.cleaned_data['case_id'],
-                "update_date": form.cleaned_data['update_date'].strftime('%Y-%m-%d')
-            }
-            mongo_db['document.info'].insert_one(document_data)
-            mongo_client.close()
+            if case.lawyer != request.user.lawyer_profile and case.client != request.user.client_profile :
+                raise PermissionDenied("You do not have permission to upload documents for this case.")
 
-            return render(request, 'document.html', {'form': DocumentForm(), 'message': 'Document saved successfully'})
-    return render(request, 'document.html', {'form': form})
+            file = request.FILES['file']
+            
+            file_id = fs.put(file, filename=file.name, contentType=file.content_type)
+            document = form.save(commit=False)
+
+            document.gridfs_id = file_id
+            document.uploaded_by = request.user
+            document.save()
+
+            return redirect(reverse('lawyer_app:lawyer_dashboard')) 
+        else:
+            print("form validation failed") 
+            print(form.errors.as_json())
+    else:
+        form = DocumentUploadForm()
+
+    context = {
+        'form': form,
+    }
+    return render(request, 'upload_document.html', context)
+
+
+
+def list_documents(request):
+    files = fs.find()
+    documents = [{'id': str(file._id), 'filename': file.filename} for file in files]
+    return render(request, 'list_documents.html', {'documents': documents})
+
+from bson import ObjectId
+def download_document(request, file_id):
+    file = fs.find_one({"_id": ObjectId(file_id)})
+    if file:
+        response = HttpResponse(file.read(), content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="{file.filename}"'
+        return response
+    return HttpResponse('File not found.', status=404)
+# Create your views here.
+# def index(request):
+#     form = DocumentForm()
+#     if request.method == 'POST':
+#         form = DocumentForm(request.POST)
+#         if form.is_valid():
+#             # Connect to MongoDB
+#             mongo_client = pymongo.MongoClient('mongodb://localhost:27017/')
+#             mongo_db = mongo_client['Document']
+
+#             # Insert document into MongoDB collection
+#             document_data = {
+#                 "document_id": form.cleaned_data['document_id'],
+#                 "document_type": form.cleaned_data['document_type'],
+#                 "case_id": form.cleaned_data['case_id'],
+#                 "update_date": form.cleaned_data['update_date'].strftime('%Y-%m-%d')
+#             }
+#             mongo_db['document.info'].insert_one(document_data)
+#             mongo_client.close()
+
+#             return render(request, 'document.html', {'form': DocumentForm(), 'message': 'Document saved successfully'})
+#     return render(request, 'document.html', {'form': form})
 
 

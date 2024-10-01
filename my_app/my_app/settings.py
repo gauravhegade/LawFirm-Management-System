@@ -28,11 +28,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-^y1p205fuz*!*rh=x5@eo-&o5^musb0zbw7e396ji@y7nx!la%'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = []
 
-
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 # Application definition
@@ -170,3 +171,6 @@ EMAIL_HOST_PASSWORD = GMAIL_HOST_PASSWORD
 DEFAULT_FROM_EMAIL = GMAIL_FROM_EMAIL
 
 SITE_URL=os.getenv('SITE_URL','http://localhost:8000')
+
+MONGO_URL=os.getenv('MONGO_URL','mongodb://localhost:27017/')
+MONGO_DB=os.getenv('MONGO_DB','lawfirmdocs')

@@ -104,7 +104,12 @@ class Document(models.Model):
     ]
     document_type = models.CharField(max_length=100, choices=DOCUMENT_TYPE_CHOICES)
 
+    description = models.TextField(max_length=1000)
     uploaded_at = models.DateTimeField(auto_now_add=True)
+    # file = models.FileField(upload_to='documents/')
+    gridfs_id = models.CharField(max_length=255, unique=True)
+
+    uploaded_by = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
 
     def __str__(self):
         return str(self.document_id)

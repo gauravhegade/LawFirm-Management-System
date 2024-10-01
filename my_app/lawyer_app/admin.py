@@ -24,7 +24,7 @@ class CustomUserAdmin(UserAdmin):
             user.is_active = True  # Activate the user
             user.save()
 
-            #self.send_approval_email(user)
+            self.send_approval_email(user)
 
         self.message_user(request, "Selected users have been approved.")
     approve_user.short_description = "Approve selected users"
@@ -34,7 +34,7 @@ class CustomUserAdmin(UserAdmin):
             user.is_active = False   
             user.save()
 
-            #self.send_deactivation_email(user)
+            self.send_deactivation_email(user)
 
         self.message_user(request, "Selected users have been deactivated and notified by email.")
     deactivate_user.short_description = "Deactivate selected users"

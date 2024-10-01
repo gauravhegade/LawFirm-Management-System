@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<strong><h2>Uploaded Documents</h2></strong>
+<ul>
+    {% for document in documents %}
+        <li>
+            <a href="{% url 'lawyer_app:download_document' document.id %}">{{ document.filename }}</a>
+        </li>
+    {% empty %}
+        <li>No documents uploaded.</li>
+    {% endfor %}
+</ul>
+{% endblock %}
