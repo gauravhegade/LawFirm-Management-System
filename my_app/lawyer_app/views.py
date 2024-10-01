@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from .forms import UserRegisterForm,DocumentForm, LoginForm,ClientProfileForm,LawyerProfileForm , CaseForm
 from django.shortcuts import render, redirect
+from django.urls import reverse
 from django.contrib.auth import authenticate, login,logout
 from .models import Lawyer, Case, Client, CustomUser
 import pandas as pd
@@ -16,7 +17,8 @@ import pymongo
 def info(request):
     if request.method == "GET":
         return render(request,'info.html')
-
+    
+@login_required
 def search_clients(request):
     if request.method == 'GET' and request.headers.get('x-requested-with') == 'XMLHttpRequest':
         query = request.GET.get('query', '')
@@ -48,16 +50,16 @@ def login_user(request):
                     if hasattr(user, 'lawyer_profile'):
                         if not user.lawyer_profile.profile_complete:
                             messages.info(request, 'Please complete your lawyer profile.')
-                            return redirect('/lawyer/complete-profile')  
+                            return redirect(reverse('lawyer_app:complete_lawyer_profile')) 
                         else:
-                            return redirect('/lawyer/dashboard')
+                            return redirect(reverse('lawyer_app:lawyer_dashboard'))
                     
                     elif hasattr(user, 'client_profile'):
                         if not user.client_profile.profile_complete:
                             messages.info(request, 'Please complete your client profile.')
-                            return redirect('/client/complete-profile') 
+                            return redirect(reverse('lawyer_app:complete_client_profile')) 
                         else:
-                            return redirect('/client/dashboard') 
+                            return redirect(reverse('lawyer_app:client_dashboard')) 
                     
 
                 else:
@@ -114,7 +116,7 @@ def complete_lawyer_profile(request):
             lawyer_profile.profile_complete = True  # Mark profile as complete
             lawyer_profile.save()
             messages.success(request, 'Lawyer profile updated successfully.')
-            return redirect('/logout')  
+            return redirect(reverse('lawyer_app:logout'))  
     else:
         form = LawyerProfileForm(instance=lawyer_profile)
     
@@ -130,7 +132,7 @@ def complete_client_profile(request):
             client_profile.profile_complete = True  # Mark profile as complete
             client_profile.save()
             messages.success(request, 'Client profile updated successfully.')
-            return redirect('/logout')  
+            return redirect(reverse('lawyer_app:logout')) 
     else:
         form = ClientProfileForm(instance=client_profile)
     
@@ -140,9 +142,9 @@ def complete_client_profile(request):
 def lawyer_dashboard(request):
     lawyer = request.user.lawyer_profile
 
-    cases = Case.objects.filter(lawyer=lawyer)
+    cases = Case.objects.filter(lawyer=lawyer, status='approved')
 
-    clients = Client.objects.filter(cases__lawyer=lawyer).distinct()  
+    clients = Client.objects.filter(cases__lawyer=lawyer,cases__status='approved').distinct()  
 
     context = {
         'lawyer': lawyer,
@@ -168,7 +170,7 @@ def client_profile(request, client_id):
 @login_required
 def logout_user(request):
     logout(request)
-    return redirect('lawyer_app:login')
+    return redirect(reverse('lawyer_app:login'))  
 
 @login_required
 def create_case(request):
@@ -178,8 +180,9 @@ def create_case(request):
         if form.is_valid():
             case = form.save(commit=False)
             case.lawyer = request.user.lawyer_profile
+            case.status = 'pending'
             case.save()
-            return redirect('lawyer_app:lawyer_dashboard')  # Redirect to the dashboard or another page
+            return redirect(reverse('lawyer_app:lawyer_dashboard'))  # Redirect to the dashboard or another page
     else:
         form = CaseForm()
     
@@ -189,10 +192,10 @@ def create_case(request):
 def client_dashboard(request):
     client = request.user.client_profile
 
-    active_cases = Case.objects.filter(client=client, is_active=True)
+    active_cases = Case.objects.filter(client=client, is_active=True,status='approved')
     past_cases = Case.objects.filter(client=client, is_active=False)
     
-    current_lawyers = Lawyer.objects.filter(cases__client=client, cases__is_active=True).distinct()
+    current_lawyers = Lawyer.objects.filter(cases__client=client, cases__is_active=True, cases__status='approved').distinct()
 
     past_lawyers = Lawyer.objects.filter(cases__client=client, cases__is_active=False).distinct()
     
@@ -219,27 +222,61 @@ def lawyer_profile(request, lawyer_id):
     
     return render(request, 'profile/lawyer_profile.html', context)
 
-'''
-def lawyer_dashboard(request, lawyer_id):
-    # Assuming the lawyer_id is passed as a parameter in the URL
+@login_required
+def approve_case(request):
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        case_id = request.POST.get('case_id') 
 
-    # Retrieve lawyer information
-    lawyer = Lawyer.objects.get(lawyer_id=lawyer_id)
+        try:
+            case = Case.objects.get(case_id=case_id, client=request.user.client_profile, status='pending')
+        except Case.DoesNotExist:
+            case = None
+        
+        if action == 'approve':
+            case.status = 'approved'
+            case.save()
+        
+        elif action == 'reject':
+            case.status = 'rejected'
+            case.save()
 
-    # Retrieve cases handled by the lawyer
-    cases_handled = Case.objects.filter(lawyer_id=lawyer)
+        return redirect(reverse('lawyer_app:approve_case'))
 
-    # Retrieve clients associated with the cases
-    clients_handled = Client.objects.filter(case_id__in=cases_handled)
-
+    pending_cases = Case.objects.filter(client=request.user.client_profile, status='pending')
+    
     context = {
-        'lawyer': lawyer,
-        'cases_handled': cases_handled,
-        'clients_handled': clients_handled,
+        'pending_cases': pending_cases
     }
 
-    return render(request, 'lawyer_dashboard.html', context)
-'''
+    return render(request, 'approve_case.html', context)
+
+@login_required
+def case_status(request):
+    lawyer = request.user.lawyer_profile
+
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        case_id = request.POST.get('case_id')
+        if action == 'delete':
+            try:
+                case = Case.objects.get(case_id=case_id, lawyer=lawyer)
+                # case.status='rejected'
+                # case.save()
+                case.delete()
+                messages.success(request, 'Case deleted successfully.')
+            except Case.DoesNotExist:
+                messages.error(request, 'Case not found.')
+
+    cases = Case.objects.filter(lawyer=lawyer, status__in=['pending', 'rejected'])
+    
+    context = {
+        'cases': cases,
+    }
+    
+    return render(request, 'case_status.html', context)
+
+
 def predict(request):
     return render(request,"predict.html")
 # Create your views here.

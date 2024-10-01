@@ -83,6 +83,13 @@ class Case(models.Model):
 
     is_active = models.BooleanField(default=True)
 
+    STATUS_CHOICES = [
+        ('pending', 'Pending Approval'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+    ]
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
+
     def __str__(self):
         return self.case_name
 

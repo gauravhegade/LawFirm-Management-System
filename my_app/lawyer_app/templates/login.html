@@ -8,12 +8,20 @@
                         <form method="post" class="space-y-4" id="login-form">
                             {% csrf_token %}
                             <div>
-                                <label for="id_username" class="block text-sm font-medium text-gray-700">Username:</label>
+                                <label for="id_username" class="block">
+                                    <span class=" text-sm font-medium text-gray-700">
+                                        Username<span class="text-red-500 pl-0.5 font-bold">*</span>
+                                    </span>
+                                </label>
                                 <input type="text" name="username" id="id_username" class="mt-1 block px-3 h-8 w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50" required>
                                 <p id="username-error" class="text-red-600 text-sm mt-1 hidden"></p>
                             </div>
                             <div>
-                                <label for="id_password" class="block text-sm font-medium text-gray-700">Password:</label>
+                                <label for="id_password" class="block">
+                                    <span class="text-sm font-medium text-gray-700">
+                                        Password<span class="text-red-500 pl-0.5 font-bold">*</span>
+                                    </span>
+                                </label>
                                 <input type="password" name="password" id="id_password" class="mt-1 px-3 block w-full h-8 border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-100 transition duration-200" required autocomplete="new-password">
                                 <p id="password-error" class="text-red-600 text-sm mt-1 hidden"></p>
                             </div>

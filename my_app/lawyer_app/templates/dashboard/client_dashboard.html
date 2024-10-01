@@ -111,10 +111,14 @@
         </div>
     </div>
 
-    <!-- Document Upload Section -->
+    
     <div class="fixed-buttons">
-        <a href="" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 block text-center flex items-center">
+        <a href="{% url 'lawyer_app:approve_case' %}" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 block text-center flex items-center mb-2">
+            <i class="fas fa-check-circle mr-2"></i> Approve Case
+        </a>
+        <a href="" class="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-green-700 block text-center flex items-center">
             <i class="fas fa-file-upload mr-2"></i> Upload Document
         </a>
     </div>
+    
 {% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'base_create.html' %}
+{% block content %}
+    {% include 'nav_bar.html' %}
+    <div class="max-w-3xl mx-auto p-6 bg-white rounded-lg shadow-md mt-5">
+        <h2 class="text-2xl font-bold mb-4">Approve Pending Cases</h2>
+        
+        {% if pending_cases %}
+            <ul>
+                {% for case in pending_cases %}
+                <div class="max-w-3xl mx-auto p-6 bg-gray-100 rounded-lg shadow-md mt-5 mb-0">
+                    <li class="mb-1 flex justify-between"> 
+                        <div class="flex-1">
+                            <h3 class="font-bold">{{ case.case_name }}</h3>
+                            <p>Lawyer: <a href="{% url 'lawyer_app:lawyer_profile' case.lawyer.lawyer_id %}" class="ml-0.5 font-semibold">{{ case.lawyer.user.get_full_name }}</a></p>
+                            <p class="italic">{{ case.case_description }}</p>
+                        </div>
+                        <form method="POST" class="flex flex-col justify-between ml-4">
+                            {% csrf_token %}
+                            <input type="hidden" name="case_id" value="{{ case.case_id }}">
+                            <button type="submit" name="action" value="approve" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 mb-2">Approve</button>
+                            <button type="submit" name="action" value="reject" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Reject</button>
+                        </form>
+                    </li>
+                </div>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="text-gray-500">No pending cases for approval.</p>
+        {% endif %}
+    </div>
+    
+{% endblock %}

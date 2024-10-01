@@ -1,0 +1,43 @@
+{% extends 'base_create.html' %}
+
+{% block content %}
+    {% include 'nav_bar.html' %}
+    
+    <div class="max-w-3xl mx-auto p-6 bg-white rounded-lg shadow-md mt-5">
+        <h2 class="text-2xl font-bold mb-4">Cases Status</h2>
+        
+        {% if cases %}
+            <ul>
+                {% for case in cases %}
+                <div class="max-w-3xl mx-auto p-6 bg-gray-100 rounded-lg shadow-md mt-5 mb-0">
+                    <li class="mb-1 flex justify-between">
+                        
+                            <div class="flex-1">
+                                <h3 class="font-bold">{{ case.case_name }}</h3>
+                                <p>Client: <a href="{% url 'lawyer_app:client_profile' case.client.client_id %}" class="ml-0.5 font-semibold">{{ case.client.user.get_full_name }}</a></p>
+                                <p class="italic">{{ case.case_description }}</p>
+                            </div>
+                            <form method="POST" class="flex flex-col justify-between ml-4">
+                                {% csrf_token %}
+                                <input type="hidden" name="case_id" value="{{ case.case_id }}">
+                                <p class="{% if case.status == 'pending' %}bg-yellow-500{% elif case.status == 'rejected' %}bg-red-500{% else %}bg-gray-500{% endif %} text-white px-4 py-2 rounded hover:bg-gray-600 mb-2">
+                                    {% if case.status == 'pending' %}
+                                        Pending
+                                    {% elif case.status == 'rejected' %}
+                                        Rejected
+                                    {% else %}
+                                        Unknown Status
+                                    {% endif %}
+                                </p>
+                                <button type="submit" name="action" value="delete" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-red-600">Delete</button>
+                            </form>
+                        
+                    </li>
+                </div>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="text-gray-500">No pending cases found.</p>
+        {% endif %}
+    </div>
+{% endblock %}

@@ -6,11 +6,13 @@ urlpatterns = [
     path('', views.info ,name='home'),
     path('login/', views.login_user, name='login'),
 
+    path('lawyer/case-status/', views.case_status, name='case_status'),
     path('client/dashboard/', views.client_dashboard, name='client_dashboard'),
 
     path('client/<int:client_id>/', views.client_profile, name='client_profile'),
     path('lawyer/<int:lawyer_id>/', views.lawyer_profile, name='lawyer_profile'),
 
+    path('client/approve-case/', views.approve_case, name='approve_case'),
     path('search-clients/', views.search_clients, name='search_clients'),
 
     path('lawyer/dashboard/', views.lawyer_dashboard, name='lawyer_dashboard'),
