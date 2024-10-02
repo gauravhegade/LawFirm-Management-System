@@ -10,9 +10,12 @@ from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 
+from .email_queue import email_queue, condition
+
 class CustomUserAdmin(UserAdmin):
     model = CustomUser
     list_display = ('username', 'email', 'is_active')
+
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -20,62 +23,44 @@ class CustomUserAdmin(UserAdmin):
         return qs
 
     def approve_user(self, request, queryset):
+        queryset.update(is_active=True)
         for user in queryset:
-            user.is_active = True  # Activate the user
-            user.save()
-
-            self.send_approval_email(user)
-
+            self.queue_approval_email(user)
         self.message_user(request, "Selected users have been approved.")
-    approve_user.short_description = "Approve selected users"
 
     def deactivate_user(self, request, queryset):
+        queryset.update(is_active=False)
         for user in queryset:
-            user.is_active = False   
-            user.save()
+            self.queue_deactivation_email(user)
+        self.message_user(request, "Selected users have been deactivated")
 
-            self.send_deactivation_email(user)
-
-        self.message_user(request, "Selected users have been deactivated and notified by email.")
-    deactivate_user.short_description = "Deactivate selected users"
-
-    actions = [approve_user,deactivate_user]
-
-    def send_approval_email(self, user):
+    def queue_approval_email(self, user):
         subject = 'Your account has been approved'
-
         html_message = render_to_string('emails/approved_user.html', {
             'user': user,
-            'login_url': f"{settings.SITE_URL}/login/" 
+            'login_url': f"{settings.SITE_URL}/login/"
         })
         plain_message = strip_tags(html_message)
 
-        send_mail(
-            subject=subject,
-            message=plain_message, 
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[user.email],
-            fail_silently=False,
-            html_message=html_message  # Include the HTML version
-        )
+        with condition:
+            email_queue.put((subject, plain_message, settings.DEFAULT_FROM_EMAIL, [user.email], html_message))
+            condition.notify()
 
-    def send_deactivation_email(self, user):
+    def queue_deactivation_email(self, user):
         subject = 'Your Account Has Been Deactivated'
-
         html_message = render_to_string('emails/deactivated_user.html', {
             'user': user,
-            'support_url': 'https://www.google.com' 
+            'support_url': 'https://www.google.com'
         })
         plain_message = strip_tags(html_message)
 
-        send_mail(
-            subject=subject,
-            message=plain_message, 
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[user.email],
-            fail_silently=False,
-            html_message=html_message
-        )
+        with condition:
+            email_queue.put((subject, plain_message, settings.DEFAULT_FROM_EMAIL, [user.email], html_message))
+            condition.notify()
+
+    approve_user.short_description = "Approve selected users"
+    deactivate_user.short_description = "Deactivate selected users"
+    actions = [approve_user,deactivate_user]
 
     
 
