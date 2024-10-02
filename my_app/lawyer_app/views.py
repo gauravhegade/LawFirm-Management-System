@@ -213,7 +213,7 @@ def create_case(request):
         'form': form,
         'user': True
     }
-    return render(request, 'create_case.html', context)
+    return render(request, 'lawyer/create_case.html', context)
 
 @login_required
 def client_dashboard(request):
@@ -279,7 +279,7 @@ def approve_case(request):
         'user': False
     }
 
-    return render(request, 'approve_case.html', context)
+    return render(request, 'client/approve_case.html', context)
 
 @login_required
 def case_status(request):
@@ -305,7 +305,7 @@ def case_status(request):
         'user' : True
     }
     
-    return render(request, 'case_status.html', context)
+    return render(request, 'lawyer/case_status.html', context)
 
 
 def page_not_found(request, exception):
@@ -387,7 +387,7 @@ def upload_document(request):
         'status':status,
         'user' : hasattr(request.user, 'lawyer_profile')
     }
-    print(status)
+    #print(status)
     return render(request, 'upload_document.html', context)
 
 
@@ -402,11 +402,13 @@ def case_details(request, case_id):
             'case': case,
             'client': client,
             'lawyer': lawyer,
+            'user': hasattr(request.user, 'lawyer_profile')
         }
     else:
         context = {
             'case': None,
             'user': hasattr(request.user, 'lawyer_profile')
+            
         }
     return render(request,'case_details.html',context)
 

@@ -1,10 +1,6 @@
 {% extends 'base_create.html' %}
 {% block style %} 
 <style>
-    .navbar {
-        background: rgba(255, 255, 255, 0.9);
-        backdrop-filter: blur(10px);
-    }
     .profile-box {
         background: rgba(255, 255, 255, 0.95);
         border-radius: 15px;
@@ -15,29 +11,58 @@
         border-radius: 15px;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     }
-    .fixed-buttons {
-        position: fixed;
-        top: 20%;
-        right: 2%;
-        background: rgba(255, 255, 255, 0.95);
-        border-radius: 15px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        padding: 1rem;
-        z-index: 10;
-    }
 </style>
 {% endblock %}
 
 {% block content %}
 {% include 'nav_bar.html' %}
+
+<div id="sidebarMenu" class="fixed top-0 left-0 h-full hidden w-full backdrop-filter backdrop-blur-xl bg-white/[0.2] text-white z-50 overflow-x-hidden transition-all duration-300 transform">
+    <button class="absolute top-4 right-4 text-3xl font-bold text-black" onclick="closeNav()">&times;</button>
+    <div class="flex flex-col items-start mt-20 pl-4 space-y-4">
+        <a href="{% url 'lawyer_app:create_case' %}" class="bg-blue-600 text-white w-48 px-4 py-2 rounded-md hover:bg-blue-700  block text-center flex items-center">
+            <i class="fas fa-plus-circle mr-2"></i> Create Case
+        </a>
+        <a href="{% url 'lawyer_app:upload_document' %}" class="bg-green-600 text-white w-48 px-4 py-2 rounded-md hover:bg-green-700  block text-center flex items-center">
+            <i class="fas fa-file-upload mr-2"></i> Upload Document
+        </a>
+        <a href="{% url 'lawyer_app:case_status' %}" class="bg-yellow-600 text-white w-48 px-4 py-2 rounded-md hover:bg-yellow-500 block text-center flex items-center">
+            <i class="fa-solid fa-cube mr-2"></i> Case Status
+        </a>
+        <a href="{% url 'lawyer_app:home' %}" class="bg-blue-600 text-white w-48 px-4 py-2 rounded-md active:bg-green-700 flex items-center">
+            <i class="fas fa-home mr-2"></i> Home
+        </a>
+       
+            <a href=" {% if user %}
+                {% url 'lawyer_app:lawyer_dashboard' %}
+            {% else %}
+                {% url 'lawyer_app:client_dashboard'%}
+            {%endif%}" 
+            class="bg-gray-600 text-white w-48 px-4 py-2 rounded-md active:bg-green-700 flex items-center">
+                <i class="fa-solid fa-bars-progress mr-2"></i> Dashboard
+            </a>
+
+        <a href="{% url 'lawyer_app:logout' %}" class="bg-red-600 text-white w-48 px-4 py-2 rounded-md active:bg-green-700 flex items-center">
+            <i class="fas fa-sign-out-alt mr-2"></i> Logout
+        </a>
+    </div>
+</div>
+
+<!-- Button to open sidebar on small screens with improved styling -->
+<button id="openSidebar" class="fixed top-2 right-4 z-40  text-gray-900 p-3 hover:shadow-xl transition duration-300 md:hidden" onclick="openNav()">
+    <i class="fas fa-bars text-2xl"></i>
+</button>
+
     <div class="min-h-screen flex flex-col items-center p-6">
         <div class="profile-box p-6 w-full max-w-3xl mb-8">
             <h2 class="text-2xl font-bold mb-4">Welcome, {{ lawyer.user.get_full_name }}</h2>
             <h3 class="text-lg font-semibold">Your Details</h3>
             <p><strong>Specialization:</strong> {{ lawyer.specialization }}</p>
-            <p><strong>Address:</strong> {{ lawyer.address }}</p>
+            
+            <p><strong>Email:</strong> {{ lawyer.user.email}}</p>
             <p><strong>Mobile Number:</strong> {{ lawyer.mobile_number }}</p>
-            <p><strong>Profile Completion:</strong> {{ lawyer.profile_complete|yesno:"Complete,Incomplete" }}</p>
+            <p><strong>Profile Status:</strong> {{ lawyer.profile_complete|yesno:"Complete,Incomplete" }}</p>
+            <p><strong>Address:</strong> {{ lawyer.address }}</p>
         </div>
 
         <div class="section-box p-6 w-full max-w-3xl mb-8">
@@ -74,7 +99,7 @@
         </div>
     </div>
 
-    <div class="fixed-buttons">
+    <div class="fixed right-4 top-1/4 bg-white shadow-md rounded-md p-4 space-y-4 z-10 hidden md:block">
         <a href="{% url 'lawyer_app:create_case' %}" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 mb-2 block text-center flex items-center">
             <i class="fas fa-plus-circle mr-2"></i> Create Case
         </a>
@@ -85,4 +110,15 @@
             <i class="fa-solid fa-cube mr-2"></i> Case Status
         </a>
     </div>
+
+    <script>
+        function openNav() {
+            document.getElementById("sidebarMenu").classList.remove('hidden');
+        }
+    
+        function closeNav() {
+            document.getElementById("sidebarMenu").classList.add('hidden');
+        }
+    </script>
+    
 {% endblock %}
