@@ -66,7 +66,7 @@ class DocumentUploadForm(forms.ModelForm):
     file = forms.FileField(required=True)
     class Meta:
         model = Document
-        fields = ['case', 'document_type', 'description', 'file']
+        fields = ['case', 'document_type', 'description','filename', 'file']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

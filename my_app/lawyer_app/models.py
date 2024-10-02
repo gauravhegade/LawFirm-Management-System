@@ -96,14 +96,13 @@ class Case(models.Model):
 class Document(models.Model):
     document_id = models.AutoField(primary_key=True)
     case = models.ForeignKey(Case, on_delete = models.CASCADE)
-
     DOCUMENT_TYPE_CHOICES = [
         ('brief', 'Brief'),
         ('contract', 'Contract'),
         ('memo', 'Memo'),
     ]
+    filename = models.CharField(max_length=100)
     document_type = models.CharField(max_length=100, choices=DOCUMENT_TYPE_CHOICES)
-
     description = models.TextField(max_length=1000)
     uploaded_at = models.DateTimeField(auto_now_add=True)
     # file = models.FileField(upload_to='documents/')

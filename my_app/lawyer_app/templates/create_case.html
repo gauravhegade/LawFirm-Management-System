@@ -56,8 +56,7 @@
                     $('#client-dropdown').addClass('hidden'); 
                 }
             });
-    
-            // Handle selecting a client
+            
             $(document).on('click', '.dropdown-item', function() {
                 $('#client-search').val($(this).text());
                 $('#client-id').val($(this).data('id')); 

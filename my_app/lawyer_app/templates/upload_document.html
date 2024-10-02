@@ -30,11 +30,18 @@
                 <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
                 <textarea name="description" id="description" rows="4" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-500 transition duration-200 px-2" required></textarea>
             </div>
-
+            <input type="hidden" name="filename" id="filename">
             <div class="mb-4">
                 <label for="file" class="block text-sm font-medium text-gray-700">Upload File (PDF/Document)</label>
-                <input type="file" name="file" id="file" class="mt-1 block w-full h-10 border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-500 transition duration-200 px-2" accept=".pdf,.doc,.docx" required>
+                <input type="file" name="file" id="file" class="mt-1 block w-full h-10 border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-500 transition duration-200 px-2" accept=".pdf" required>
             </div>
+            {% if status is not None %}
+                {% if status == True %}
+                    <p id="error" class="text-green-600 text-sm mt-1">Document Uploaded Successfully</p>
+                {% else %}
+                    <p id="error" class="text-red-600 text-sm mt-1">Document Upload Failed</p>
+                {% endif %}
+            {% endif %}
 
             <button type="submit" class="w-full bg-blue-600 text-white rounded-md py-2 hover:bg-blue-700 transition duration-200">Upload Document</button>
         </form>
@@ -46,7 +53,7 @@
                 let query = $(this).val();
                 if (query.length > 1) {
                     $.ajax({
-                        url: "{% url 'lawyer_app:search_cases' %}",  // Define your URL for searching cases
+                        url: "{% url 'lawyer_app:search_cases' %}", 
                         data: {
                             'query': query
                         },
@@ -67,11 +74,15 @@
                 }
             });
 
-            // Handle selecting a case
             $(document).on('click', '.dropdown-item', function() {
                 $('#case-search').val($(this).text());
-                $('#case-id').val($(this).data('id'));  // Set the selected case_id
-                $('#case-dropdown').addClass('hidden');  // Hide the dropdown after selecting
+                $('#case-id').val($(this).data('id'));  
+                $('#case-dropdown').addClass('hidden');  
+            });
+
+            $('#file').on('change', function() {
+                let fileName = $(this).val().split('\\').pop();
+                $('#filename').val(fileName);
             });
         });
     </script>

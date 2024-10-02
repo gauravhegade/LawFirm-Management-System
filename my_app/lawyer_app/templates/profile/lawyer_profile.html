@@ -23,7 +23,7 @@
             <h3 class="text-lg font-semibold mb-4">Lawyer Information</h3>
             <p><strong>Specialization:</strong> {{ lawyer.specialization }}</p>
             <p><strong>Address:</strong> {{ lawyer.address }}</p>
-            <p><strong>Mobile Number:</strong> {{ lawyer.mobile_number }}</p>
+            <p><strong>Email:</strong> <a href="mailto:{{ lawyer.user.email }}">{{ lawyer.user.email }}</a></p>
             <p><strong>Registered At:</strong> {{ lawyer.registered_at }}</p>
             
         </div>

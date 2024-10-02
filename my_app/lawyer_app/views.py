@@ -1,12 +1,11 @@
-from django.shortcuts import render
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,get_object_or_404
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .forms import UserRegisterForm, LoginForm,ClientProfileForm,LawyerProfileForm , CaseForm, DocumentUploadForm
-from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth import authenticate, login,logout
-from .models import Lawyer, Case, Client, CustomUser
+from .models import Lawyer, Case, Client, CustomUser,Document
 import pandas as pd
 from django.http import JsonResponse,HttpResponse
 from django.conf import settings
@@ -42,7 +41,7 @@ def search_clients(request):
 def search_cases(request):
     if request.method == 'GET' and request.headers.get('x-requested-with') == 'XMLHttpRequest':
         query = request.GET.get('query', '')
-        limit = 5
+        #limit = 5
         cases = None
 
         if hasattr(request.user, 'lawyer_profile'):
@@ -52,7 +51,7 @@ def search_cases(request):
             cases = Case.objects.filter(client=request.user.client_profile, case_name__icontains=query)
         
         if cases is not None:
-            cases = cases.distinct()[:limit]
+            cases = cases.distinct() #[:limit]
             results = [{'id': case.case_id, 'name': case.case_name} for case in cases]
             return JsonResponse(results, safe=False)
         
@@ -165,7 +164,7 @@ def complete_client_profile(request):
 def lawyer_dashboard(request):
     lawyer = request.user.lawyer_profile
 
-    cases = Case.objects.filter(lawyer=lawyer, status='approved')
+    cases = Case.objects.filter(lawyer=lawyer, status='approved',is_active=True)
 
     clients = Client.objects.filter(cases__lawyer=lawyer,cases__status='approved').distinct()  
 
@@ -173,6 +172,7 @@ def lawyer_dashboard(request):
         'lawyer': lawyer,
         'clients': clients,
         'cases': cases,  
+        'user':True
     }
 
     return render(request, 'dashboard/lawyer_dashboard.html', context)
@@ -186,7 +186,8 @@ def client_profile(request, client_id):
         client = None
     
     context = { 
-        'client' : client,
+        'user': True,
+        'client' : client
     }
     return render(request, 'profile/client_profile.html', context)
 
@@ -205,11 +206,14 @@ def create_case(request):
             case.lawyer = request.user.lawyer_profile
             case.status = 'pending'
             case.save()
-            return redirect(reverse('lawyer_app:lawyer_dashboard'))  # Redirect to the dashboard or another page
+            return redirect(reverse('lawyer_app:lawyer_dashboard'))
     else:
         form = CaseForm()
-    
-    return render(request, 'create_case.html', {'form': form})
+    context = {
+        'form': form,
+        'user': True
+    }
+    return render(request, 'create_case.html', context)
 
 @login_required
 def client_dashboard(request):
@@ -228,6 +232,7 @@ def client_dashboard(request):
         'past_cases': past_cases,
         'current_lawyers': current_lawyers,
         'past_lawyers': past_lawyers,
+        'user': False
     }
     
     return render(request, 'dashboard/client_dashboard.html', context)
@@ -241,6 +246,7 @@ def lawyer_profile(request, lawyer_id):
     
     context = {
         'lawyer': lawyer,
+        'user' : False
     }
     
     return render(request, 'profile/lawyer_profile.html', context)
@@ -269,7 +275,8 @@ def approve_case(request):
     pending_cases = Case.objects.filter(client=request.user.client_profile, status='pending')
     
     context = {
-        'pending_cases': pending_cases
+        'pending_cases': pending_cases,
+        'user': False
     }
 
     return render(request, 'approve_case.html', context)
@@ -295,6 +302,7 @@ def case_status(request):
     
     context = {
         'cases': cases,
+        'user' : True
     }
     
     return render(request, 'case_status.html', context)
@@ -346,15 +354,17 @@ fs = gridfs.GridFS(db)
 
 @login_required
 def upload_document(request):
+    status = None
     if request.method == 'POST':
         form = DocumentUploadForm(request.POST, request.FILES)
 
         if form.is_valid():
             case = form.cleaned_data['case']
-
-            if case.lawyer != request.user.lawyer_profile and case.client != request.user.client_profile :
+            
+            if (((hasattr(request.user, 'lawyer_profile')) and case.lawyer != request.user.lawyer_profile) and 
+                ((hasattr(request.user, 'client_profile')) and case.client != request.user.client_profile)):
                 raise PermissionDenied("You do not have permission to upload documents for this case.")
-
+            
             file = request.FILES['file']
             
             file_id = fs.put(file, filename=file.name, contentType=file.content_type)
@@ -363,27 +373,69 @@ def upload_document(request):
             document.gridfs_id = file_id
             document.uploaded_by = request.user
             document.save()
-
-            return redirect(reverse('lawyer_app:lawyer_dashboard')) 
+            status = True
+            
         else:
-            print("form validation failed") 
-            print(form.errors.as_json())
+            #print("form validation failed") 
+            #print(form.errors.as_json())
+            status = False
     else:
         form = DocumentUploadForm()
 
     context = {
         'form': form,
+        'status':status,
+        'user' : hasattr(request.user, 'lawyer_profile')
     }
+    print(status)
     return render(request, 'upload_document.html', context)
 
 
+@login_required
+def case_details(request, case_id):
+    case = get_object_or_404(Case, case_id=case_id)
+    if case.status == 'approved':
+        client = case.client
+        lawyer = case.lawyer
+        
+        context = {
+            'case': case,
+            'client': client,
+            'lawyer': lawyer,
+        }
+    else:
+        context = {
+            'case': None,
+            'user': hasattr(request.user, 'lawyer_profile')
+        }
+    return render(request,'case_details.html',context)
 
-def list_documents(request):
-    files = fs.find()
-    documents = [{'id': str(file._id), 'filename': file.filename} for file in files]
-    return render(request, 'list_documents.html', {'documents': documents})
+@login_required
+def fetch_case_documents(request, case_id):
+    documents = Document.objects.filter(case_id=case_id)
+    document_list = [{
+        'id': doc.gridfs_id,
+        'filename': doc.filename,
+        'uploaded_by': doc.uploaded_by.get_full_name(),
+        'uploaded_at': doc.uploaded_at.strftime('%Y-%m-%d %H:%M:%S')
+    } for doc in documents]
+    
+    return JsonResponse(document_list, safe=False)
+
+# def list_documents(request):
+#     files = Document.objects.all()
+#     documents = [{'id': file.gridfs_id, 'filename': file.filename} for file in files]
+#     return render(request, 'list_documents.html', {'documents': documents})
+
+# @login_required
+# def list_documents_by_case(request,case_id):
+#     files = Document.objects.filter(case_id=case_id)
+#     documents = [{'id': str(file.gridfs_id), 'filename': file.filename} for file in files]
+#     return render(request, 'list_documents.html', {'documents': documents})
+
 
 from bson import ObjectId
+@login_required
 def download_document(request, file_id):
     file = fs.find_one({"_id": ObjectId(file_id)})
     if file:
@@ -391,6 +443,17 @@ def download_document(request, file_id):
         response['Content-Disposition'] = f'attachment; filename="{file.filename}"'
         return response
     return HttpResponse('File not found.', status=404)
+
+@login_required
+def view_document(request, file_id):
+    file = fs.find_one({"_id": ObjectId(file_id)})
+    if file:
+        response = HttpResponse(file.read(), content_type='application/pdf')
+        response['Content-Disposition'] = f'inline; filename="{file.filename}"'
+        return response
+    return HttpResponse('File not found.', status=404)
+
+
 # Create your views here.
 # def index(request):
 #     form = DocumentForm()

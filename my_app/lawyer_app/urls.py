@@ -31,8 +31,12 @@ urlpatterns = [
     path('client/complete-profile/', views.complete_client_profile, name='complete_client_profile'),
 
     path('register', views.register, name='register'),
-    path('documents/', views.list_documents, name='list_documents'),
-    path('download/<file_id>/', views.download_document, name='download_document'),
+    #path('documents/', views.list_documents, name='list_documents'),
+    #path('documents-case/<int:case_id>', views.list_documents_by_case, name='list_documents_by_case'),
+    path('documents/download/<str:file_id>/', views.download_document, name='download_document'),
+    path('documents/view/<str:file_id>/', views.view_document, name='view_document'),
+    path('cases/<int:case_id>/', views.case_details, name='case_details'),
+    path('documents/cases/<int:case_id>', views.fetch_case_documents, name='fetch_case_documents'),
 ]
 
 if settings.DEBUG:

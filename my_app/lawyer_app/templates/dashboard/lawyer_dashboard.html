@@ -63,7 +63,7 @@
                 <ul class="list-disc pl-5">
                     {% for case in cases %}
                         <li>
-                            <strong>{{ case.case_name }}</strong> - 
+                            <strong><a href="{% url 'lawyer_app:case_details' case.case_id %}">{{ case.case_name }}</a></strong> -
                             <span>Created on: {{ case.created_at }}</span>
                         </li>
                     {% endfor %}

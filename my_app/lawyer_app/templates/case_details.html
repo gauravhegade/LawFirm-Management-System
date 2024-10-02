@@ -1,0 +1,79 @@
+{% extends 'base_create.html' %}
+
+{% block content %}
+{% include 'nav_bar.html' %}
+<div class="min-h-screen flex flex-col items-center p-6">
+
+    {% if case %}
+        <div class="profile-box p-6 w-full max-w-3xl mb-8">
+            
+            <h2 class="text-2xl font-bold mb-4">{{ case.case_name }}</h2>
+            <p><strong>Lawyer:</strong> {{ lawyer.user.get_full_name }}</p>
+            <p><strong>Client:</strong> {{ client.user.get_full_name }}</p>
+            <p><strong>Case Description:</strong> <span class="italic">{{ case.case_description }} </span></p>
+            
+        </div>
+
+        <div class="section-box p-6 w-full max-w-3xl mb-8">
+            <h3 class="text-lg font-semibold mb-4">Case Documents</h3>
+            <button id="fetch-documents" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Load Documents</button>
+            <div id="documents-list" class="mt-4"></div>
+        </div>
+    {% else %}
+        <div class="profile-box p-6 w-full max-w-3xl mb-8">
+            <h2 class="text-2xl font-bold mb-4">No Such Case Found</h2>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+    document.getElementById('fetch-documents').addEventListener('click', function() {
+        const caseId = "";
+        const documentsList = document.getElementById('documents-list');
+
+        fetch("{% url 'lawyer_app:fetch_case_documents' case.case_id %}")
+        .then(response => response.json())
+        .then(data => {
+            documentsList.innerHTML = '';  
+            if (data.length > 0) {
+                // Create table structure
+                documentsList.innerHTML = `
+                    <table class="table-auto w-full border-collapse">
+                        <thead>
+                            <tr class="bg-gray-100 ">
+                                <th class="border px-4 py-2">Filename</th>
+                                <th class="border px-4 py-2">Uploaded At</th>
+                                <th class="border px-4 py-2">Uploaded By</th>
+                                <th class="border px-4 py-2">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>`;
+
+                const tableBody = documentsList.querySelector('tbody');
+
+                data.forEach(doc => {
+                    tableBody.innerHTML += `
+                        <tr>
+                            <td class="border px-4 py-2">
+                                <a href="/documents/download/${doc.id}" class="text-blue-600 text-center hover:underline">${doc.filename}</a>
+                            </td>
+                            <td class="border text-center px-4 py-2">${doc.uploaded_at}</td>
+                            <td class="border text-center px-4 py-2">${doc.uploaded_by}</td>
+                            <td class="border text-center px-4 py-2">
+                                <a href="/documents/view/${doc.id}" class="text-blue-600 hover:underline">View</a>
+                            </td>
+                        </tr>`;
+                });
+            } else {
+                documentsList.innerHTML = '<p class="text-gray-500">No documents available.</p>';
+            }
+            document.getElementById('fetch-documents').classList.add('hidden');
+        })
+        .catch(error => {
+            documentsList.innerHTML = '<p class="text-red-500">Error loading documents.</p>';
+        });
+    });
+</script>
+{% endblock %}
