@@ -7,7 +7,7 @@
 
     <!-- Tailwind CSS -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     
     <style>
         body {
@@ -17,7 +17,25 @@
             transition: all 1s ease-in-out;
         }
         .foot:hover .heart{
-            transform: scale(1.5);
+            animation: beat 1s infinite;
+        }
+        .heart:hover{
+            color: #2563eb;
+        }
+        
+        @keyframes beat {
+            0%, 100% {
+                transform: scale(1);
+            }
+            25% {
+                transform: scale(1.1);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+            75% {
+                transform: scale(1.1);
+            }
         }
     </style>
 </head>
@@ -44,9 +62,11 @@
     <footer class="text-sm text-center">
         <p class="font-mono foot">
             &copy; 2024 Made with 
-            <span class="inline-block transition duration-300 transform hover:scale-150 hover:text-red-500 heart">❤️</span> 
+            <span class="inline-block transition duration-300 transform  text-red-500 hover:scale-150 hover:text-red-500 heart"><i class="fa-solid fa-heart"></i></span> 
             by Joshua
         </p>
+        
+
     </footer>
     
     

@@ -24,7 +24,6 @@ class EmailWorker(threading.Thread):
                     print("Queue is empty, worker is going to sleep...")
                     condition.wait()  
 
-                
                 email_task = email_queue.get()
 
             if email_task is None:
