@@ -20,7 +20,11 @@
             animation: beat 1s infinite;
         }
         .heart:hover{
-            color: #2563eb;
+            color: gradient#2563eb;
+            background: rgb(255,55,0);
+            background: linear-gradient(180deg, rgba(255,55,0,1) 40%, rgba(37,99,235,1) 100%);
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
         
         @keyframes beat {
