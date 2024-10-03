@@ -69,20 +69,20 @@ def login_user(request):
                 if user.is_active:  
                     login(request, user)
 
+                    profile_data = (
+                        user.lawyer_profile if hasattr(user, 'lawyer_profile') 
+                        else user.client_profile if hasattr(user, 'client_profile')
+                        else None
+                    )
+
+                    if profile_data and not profile_data.profile_complete:
+                        messages.info(request, 'Please complete your profile.')
+                        return redirect(reverse(f'lawyer_app:complete_{profile_data.__class__.__name__.lower()}'))
+                    
                     if hasattr(user, 'lawyer_profile'):
-                        if not user.lawyer_profile.profile_complete:
-                            messages.info(request, 'Please complete your lawyer profile.')
-                            return redirect(reverse('lawyer_app:complete_lawyer_profile')) 
-                        else:
-                            return redirect(reverse('lawyer_app:lawyer_dashboard'))
-                    
+                        return redirect(reverse('lawyer_app:lawyer_dashboard'))
                     elif hasattr(user, 'client_profile'):
-                        if not user.client_profile.profile_complete:
-                            messages.info(request, 'Please complete your client profile.')
-                            return redirect(reverse('lawyer_app:complete_client_profile')) 
-                        else:
-                            return redirect(reverse('lawyer_app:client_dashboard')) 
-                    
+                        return redirect(reverse('lawyer_app:client_dashboard'))
 
                 else:
                     form.add_error(None,'Your account is not active. Please wait for approval.')

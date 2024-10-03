@@ -21,7 +21,7 @@ from django.conf.urls import ( handler404, handler500 )
 from lawyer_app.views import page_not_found,server_error
 app_name ='lawyer_app'
 urlpatterns = [
-    path('admin', admin.site.urls),
+    path('admin/', admin.site.urls),
     
     path('', include('lawyer_app.urls')),
 ]
