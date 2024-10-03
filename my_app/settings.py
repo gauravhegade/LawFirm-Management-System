@@ -148,6 +148,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
@@ -178,3 +180,5 @@ SITE_URL=os.getenv('SITE_URL','http://localhost:8000')
 
 MONGO_URL=os.getenv('MONGO_URL','mongodb://localhost:27017/')
 MONGO_DB=os.getenv('MONGO_DB','lawfirmdocs')
+
+CSRF_TRUSTED_ORIGINS = [SITE_URL]
