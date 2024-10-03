@@ -1,6 +1,11 @@
 {% extends 'base.html' %}
 {% block header %} Law Database System {%endblock%}
 {% block content %}
+    <div id="" class="fixed top-4 right-4 z-40 text-gray-900 p-3 hover:shadow-xl transition duration-300">
+        <a href="{% url 'lawyer_app:login' %}" class="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-base font-medium flex items-center">
+            <i class="fa-solid fa-right-to-bracket mr-2"></i> Login
+        </a>
+    </div>
     <p class="text-lg text-gray-700 text-justify">
         The Law Database System is a comprehensive web-based application designed to streamline the management and accessibility of legal cases, documents, and client information for both clients and lawyers. The system provides a secure and efficient platform for collaboration, ensuring that all parties involved in a case can access relevant information in real-time.
     </p>
