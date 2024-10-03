@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -52,21 +53,23 @@
     textarea:focus {
       box-shadow: 0 0 3px var(--text-color);
     }
-    nav {
-            background-color: #004080;
-            padding: 10px;
-            text-align: center;
-        }
 
-  nav a {
-            color: white;
-            text-decoration: none;
-            margin: 0 10px;
-        }
+    nav {
+      background-color: #004080;
+      padding: 10px;
+      text-align: center;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin: 0 10px;
+    }
   </style>
   <nav>
-</nav>
+  </nav>
 </head>
+
 <body>
   <div class="container mt-5">
     <h1>Job Prediction Form</h1>
@@ -74,20 +77,20 @@
       {% csrf_token %}
       <label for="specialization">Specialization:</label>
       <input type="text" name="specialization" required>
-      
+
       <label for="experience">Experience (in years):</label>
       <input type="number" name="experience" required>
-      
+
       <label for="region">Region:</label>
       <input type="text" name="region" required>
-      
+
       <button type="submit" class="btn btn-light">Predict Job</button>
     </form>
 
     <div class="alert alert-success mt-3" role="alert">
       <!-- The prediction result will be displayed here -->
     </div>
-    
+
     <span class="dark-mode-switch fas fa-sun" title="Toggle Light Theme"></span>
   </div>
 
@@ -136,4 +139,5 @@
     // ... (rest of your existing JavaScript code)
   </script>
 </body>
+
 </html>
