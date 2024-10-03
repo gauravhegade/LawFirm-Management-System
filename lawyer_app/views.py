@@ -74,12 +74,12 @@ def login_user(request):
                         else user.client_profile if hasattr(user, 'client_profile')
                         else None
                     )
-
+                    print(f'{profile_data.__class__.__name__.lower()}')
                     if profile_data and not profile_data.profile_complete:
                         messages.info(request, 'Please complete your profile.')
-                        return redirect(reverse(f'lawyer_app:complete_{profile_data.__class__.__name__.lower()}'))
+                        return redirect(reverse(f'lawyer_app:complete_{profile_data.__class__.__name__.lower()}_profile'))
                     
-                    if hasattr(user, 'lawyer_profile'):
+                    if  hasattr(user, 'lawyer_profile'):
                         return redirect(reverse('lawyer_app:lawyer_dashboard'))
                     elif hasattr(user, 'client_profile'):
                         return redirect(reverse('lawyer_app:client_dashboard'))
