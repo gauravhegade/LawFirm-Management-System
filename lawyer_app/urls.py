@@ -21,14 +21,14 @@ urlpatterns = [
     path('search-clients', views.search_clients, name='search_clients'),
     path('search-cases', views.search_cases, name='search_cases'),
 
-    path('lawyer/dashboard/', views.lawyer_dashboard, name='lawyer_dashboard'),
-    path('lawyer/create-case/', views.create_case, name='create_case'),
+    path('lawyer/dashboard', views.lawyer_dashboard, name='lawyer_dashboard'),
+    path('lawyer/create-case', views.create_case, name='create_case'),
 
     path('logout', views.logout_user, name='logout'),
     
 
-    path('lawyer/complete-profile/', views.complete_lawyer_profile, name='complete_lawyer_profile'),
-    path('client/complete-profile/', views.complete_client_profile, name='complete_client_profile'),
+    path('lawyer/complete-profile', views.complete_lawyer_profile, name='complete_lawyer_profile'),
+    path('client/complete-profile', views.complete_client_profile, name='complete_client_profile'),
 
     path('register', views.register, name='register'),
     #path('documents/', views.list_documents, name='list_documents'),

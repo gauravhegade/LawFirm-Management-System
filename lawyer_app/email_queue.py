@@ -47,5 +47,5 @@ class EmailWorker(threading.Thread):
             finally:
                 email_queue.task_done()  
 
-email_worker = EmailWorker()
+email_worker = None
 

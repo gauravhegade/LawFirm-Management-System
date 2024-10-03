@@ -9,7 +9,7 @@ class LawyerAppConfig(AppConfig):
         from .email_queue import EmailWorker, email_worker,email_queue, condition
         import signal
 
-        if not email_worker.is_alive():
+        if not email_worker or not email_worker.is_alive():
             
             email_worker = EmailWorker() 
             email_worker.start()
