@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AJAX Example</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        #message-box {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f4f4f4;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>AJAX Message Fetcher</h1>
+    <p>Click the button to fetch a message from the server using AJAX:</p>
+    
+    <button id="fetch-message">Fetch Message</button>
+
+    <div id="message-box">Message will appear here...</div>
+
+    <script>
+        $(document).ready(function() {
+            $('#fetch-message').click(function() {
+                // AJAX call
+                $.ajax({
+                    url: 'http://localhost:3000/', // URL for your Django or API endpoint
+                    method: 'GET',
+                    success: function(response) {
+                        // Display the message on success
+                        $('#message-box').html('<strong>Message:</strong> ' + response.message);
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle errors
+                        $('#message-box').html('<strong>Error:</strong> Could not retrieve message');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

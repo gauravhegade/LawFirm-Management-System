@@ -26,5 +26,5 @@ class StatsMiddleware:
         duration = time.time() - start_time
 
         response["X-Page-Generation-Duration-ms"] = int(duration * 1000)
-        print()
+        print('Hi')
         return response

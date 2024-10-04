@@ -479,3 +479,5 @@ def view_document(request, file_id):
 #     return render(request, 'document.html', {'form': form})
 
 
+def test_case(request):
+    return render(request, 'test.html')
