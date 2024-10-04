@@ -41,17 +41,16 @@ def search_clients(request):
 def search_cases(request):
     if request.method == 'GET' and request.headers.get('x-requested-with') == 'XMLHttpRequest':
         query = request.GET.get('query', '')
-        #limit = 5
+        limit = 5
         cases = None
 
         if hasattr(request.user, 'lawyer_profile'):
-            cases = Case.objects.filter(lawyer=request.user.lawyer_profile, case_name__icontains=query)
+            cases = Case.objects.filter(lawyer=request.user.lawyer_profile, case_name__icontains=query)[:limit]
 
         elif hasattr(request.user, 'client_profile'):
-            cases = Case.objects.filter(client=request.user.client_profile, case_name__icontains=query)
+            cases = Case.objects.filter(client=request.user.client_profile, case_name__icontains=query)[:limit]
         
         if cases is not None:
-            cases = cases.distinct() #[:limit]
             results = [{'id': case.case_id, 'name': case.case_name} for case in cases]
             return JsonResponse(results, safe=False)
         
