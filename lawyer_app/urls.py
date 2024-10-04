@@ -41,7 +41,6 @@ urlpatterns = [
     path('documents/view/<str:file_id>', views.view_document, name='view_document'),
     path('cases/<int:case_id>', views.case_details, name='case_details'),
     path('documents/cases/<int:case_id>', views.fetch_case_documents, name='fetch_case_documents'),
-    path('test', views.test_case, name='test_case'),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
