@@ -323,7 +323,7 @@ def predict_chances(request):
     if request.method == 'POST':
         try:
             print(request.POST.get)
-            print("hello")
+            #print("hello")
             specialization = int(request.POST.get('specialization'))
             experience = int(request.POST.get('experience'))
             region = int(request.POST.get('region'))
@@ -334,7 +334,7 @@ def predict_chances(request):
                 'region': [region]
             }, columns=X.columns) 
             user_input_preprocessed = preprocess_input(user_input)
-            model = pd.read_pickle(r"C:\Users\Hammish Raj Wadeyar\Downloads\linear_regression_model.pkl")
+            model = pd.read_pickle(r"./linear_regression_model.pkl")
             result = model.predict(user_input_preprocessed)
             prediction_result = f"Predicted cost for {specialization} with {experience} years of experience in {region} is {result}."
 

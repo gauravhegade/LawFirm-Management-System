@@ -38,7 +38,7 @@ class CustomUserAdmin(UserAdmin):
         subject = 'Your account has been approved'
         html_message = render_to_string('emails/approved_user.html', {
             'user': user,
-            'login_url': f"{settings.SITE_URL}/login/"
+            'login_url': f"{settings.SITE_URL}/login"
         })
         plain_message = strip_tags(html_message)
 

@@ -31,6 +31,10 @@ urlpatterns = [
     path('client/complete-profile', views.complete_client_profile, name='complete_client_profile'),
 
     path('register', views.register, name='register'),
+
+     path('predict/', views.predict, name='predict'),
+    path('predict_results/', views.predict_chances, name='predict_chances'),
+    path('submit_prediction/', views.predict_chances, name='submit_prediction'),
     #path('documents/', views.list_documents, name='list_documents'),
     #path('documents-case/<int:case_id>', views.list_documents_by_case, name='list_documents_by_case'),
     path('documents/download/<str:file_id>', views.download_document, name='download_document'),
@@ -39,5 +43,4 @@ urlpatterns = [
     path('documents/cases/<int:case_id>', views.fetch_case_documents, name='fetch_case_documents'),
 ]
 
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
