@@ -122,7 +122,6 @@ def register(request):
             return render(request, 'message.html', context)
         else:
             messages.info(request, f'Account creation failed')
-
     else:
         form = UserRegisterForm()
     return render(request, 'register.html', {'form': form})

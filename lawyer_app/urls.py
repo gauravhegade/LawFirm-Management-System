@@ -32,7 +32,7 @@ urlpatterns = [
 
     path('register', views.register, name='register'),
 
-     path('predict/', views.predict, name='predict'),
+     path('predict', views.predict, name='predict'),
     path('predict_results/', views.predict_chances, name='predict_chances'),
     path('submit_prediction/', views.predict_chances, name='submit_prediction'),
     #path('documents/', views.list_documents, name='list_documents'),
