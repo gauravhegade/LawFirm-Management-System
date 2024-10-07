@@ -1,0 +1,51 @@
+<div id="sidebarMenu" class="fixed top-0 left-0 h-full hidden w-full backdrop-filter backdrop-blur-xl bg-white/[0.2] text-white z-50 overflow-x-hidden transition-all duration-300 transform">
+    <button class="absolute top-4 right-4 text-3xl font-bold text-black" onclick="closeNav()">&times;</button>
+    <div class="flex flex-col items-start mt-20 pl-4 space-y-4">
+        {% if user %}
+        <a href="{% url 'lawyer_app:create_case' %}" class="bg-blue-600 text-white w-48 px-4 py-2 rounded-md hover:bg-blue-700  block text-center flex items-center">
+            <i class="fas fa-plus-circle mr-2"></i> Create Case
+        </a>
+        <a href="{% url 'lawyer_app:case_status' %}" class="bg-yellow-600 text-white w-48 px-4 py-2 rounded-md hover:bg-yellow-500 block text-center flex items-center">
+            <i class="fa-solid fa-cube mr-2"></i> Case Status
+        </a>
+        {% else %}
+        <a href="{% url 'lawyer_app:approve_case' %}" class="bg-blue-600 text-white w-48 px-4 py-2 rounded-md active:bg-blue-700 flex items-center">
+            <i class="fas fa-check-circle mr-2"></i> Approve Case
+        </a>
+        {% endif %}
+        <a href="{% url 'lawyer_app:upload_document' %}" class="bg-green-600 text-white w-48 px-4 py-2 rounded-md hover:bg-green-700  block text-center flex items-center">
+            <i class="fas fa-file-upload mr-2"></i> Upload Document
+        </a>
+        <a href="{% url 'lawyer_app:home' %}" class="bg-purple-600 text-white w-48 px-4 py-2 rounded-md active:bg-purple-700 flex items-center">
+            <i class="fas fa-home mr-2"></i> Home
+        </a>
+       
+            <a href=" {% if user %}
+                {% url 'lawyer_app:lawyer_dashboard' %}
+            {% else %}
+                {% url 'lawyer_app:client_dashboard'%}
+            {%endif%}" 
+            class="bg-gray-600 text-white w-48 px-4 py-2 rounded-md active:bg-green-700 flex items-center">
+                <i class="fa-solid fa-bars-progress mr-2"></i> Dashboard
+            </a>
+
+        <a href="{% url 'lawyer_app:logout' %}" class="bg-red-600 text-white w-48 px-4 py-2 rounded-md active:bg-green-700 flex items-center">
+            <i class="fas fa-sign-out-alt mr-2"></i> Logout
+        </a>
+    </div>
+</div>
+
+
+<button id="openSidebar" class="fixed top-2 right-4 z-40  text-gray-900 p-3 hover:shadow-xl transition duration-300 md:hidden" onclick="openNav()">
+    <i class="fas fa-bars text-2xl"></i>
+</button>
+
+<script>
+    function openNav() {
+        document.getElementById("sidebarMenu").classList.remove('hidden');
+    }
+
+    function closeNav() {
+        document.getElementById("sidebarMenu").classList.add('hidden');
+    }
+</script>

@@ -19,14 +19,12 @@
 {% block content %}
 {% include 'nav_bar.html' %}
 
-<!-- Sidebar for small screens -->
+{% include 'mobile_nav.html' %}
 
 <div id="sidebarMenu" class="fixed top-0 left-0 h-full hidden w-full backdrop-filter backdrop-blur-xl bg-white/[0.2] text-white z-50 overflow-x-hidden transition-all duration-300 transform">
     <button class="absolute top-4 right-4 text-3xl font-bold text-black" onclick="closeNav()">&times;</button>
     <div class="flex flex-col items-start mt-20 pl-4 space-y-4">
-        <a href="{% url 'lawyer_app:approve_case' %}" class="bg-green-600 text-white w-48 px-4 py-2 rounded-md active:bg-green-700 flex items-center">
-            <i class="fas fa-check-circle mr-2"></i> Approve Case
-        </a>
+        
         <a href="{% url 'lawyer_app:upload_document' %}" class="bg-purple-600  w-48 text-white px-4 py-2 rounded-md active:bg-purple-700 flex items-center">
             <i class="fas fa-file-upload mr-2"></i> Upload Document
         </a>
@@ -146,14 +144,5 @@
     </a>
 </div>
 
-<script>
-    function openNav() {
-        document.getElementById("sidebarMenu").classList.remove('hidden');
-    }
-
-    function closeNav() {
-        document.getElementById("sidebarMenu").classList.add('hidden');
-    }
-</script>
 
 {% endblock %}
