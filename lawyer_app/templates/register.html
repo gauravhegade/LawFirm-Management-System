@@ -2,42 +2,38 @@
 {% block header %}Register{% endblock %}
 
 {% block content %}
-    <div id="" class="fixed top-9 right-4 z-40 text-gray-900 p-3 hover:shadow-xl transition duration-300">
-        <a href="{% url 'lawyer_app:login' %}" class="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-base font-medium flex items-center">
-            <i class="fa-solid fa-right-to-bracket mr-2"></i> Login
-        </a>
-    </div>
+   
     <form method="post" class="space-y-4" id="registration-form">
         {% csrf_token %}
         <div class="flex space-x-4">
             <div class="flex-1">
                 <label for="id_first_name" class="block text-sm font-medium text-gray-700">First Name:</label>
-                <input type="text" name="first_name" id="id_first_name" class="mt-1 block px-3 h-8 w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50" required>
+                <input type="text" name="first_name" id="id_first_name" class="mt-1 block px-3 h-8 w-full shadow-sm border-b border-gray-300 rounded-md focus:ring focus:ring-purple-500 focus:ring-opacity-50" required>
                 <p id="first-name-error" class="text-red-600 text-sm mt-1 hidden"></p>
             </div>
             <div class="flex-1">
                 <label for="id_last_name" class="block text-sm font-medium text-gray-700">Last Name:</label>
-                <input type="text" name="last_name" id="id_last_name" class="mt-1 block px-3 h-8 w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50" required>
+                <input type="text" name="last_name" id="id_last_name" class="mt-1 block px-3 h-8 w-full shadow-sm border-b border-gray-300 rounded-md focus:ring focus:ring-purple-500 focus:ring-opacity-50" required>
                 <p id="last-name-error" class="text-red-600 text-sm mt-1 hidden"></p>
             </div>
         </div>
         <div>
             <label for="id_username" class="block text-sm font-medium text-gray-700">Username:</label>
-            <input type="text" name="username" id="id_username" class="mt-1 block px-3 h-8 w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50" required>
+            <input type="text" name="username" id="id_username" class="mt-1 block px-3 h-8 w-full shadow-sm border-b border-gray-300 rounded-md focus:ring focus:ring-purple-500 focus:ring-opacity-50" required>
             <p id="username-error" class="text-red-600 text-sm mt-1 {% if form.username.errors %}{{ '' }}{% else %}hidden{% endif %}">
                 {{ form.username.errors|first }}
             </p>
         </div>
         <div>
             <label for="id_email" class="block text-sm font-medium text-gray-700">Email:</label>
-            <input type="email" name="email" id="id_email" class="mt-1 px-3 block w-full h-8 border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50" required>
+            <input type="email" name="email" id="id_email" class="mt-1 block px-3 h-8 w-full shadow-sm border-b border-gray-300 rounded-md focus:ring focus:ring-purple-500 focus:ring-opacity-50" required>
             <p id="email-error" class="text-red-600 text-sm mt-1 {% if form.email.errors %}{{ '' }}{% else %}hidden{% endif %}">
                 {{ form.email.errors|first }}
             </p>
         </div>
         <div>
             <label for="id_role" class="block text-sm font-medium text-gray-700">Role:</label>
-            <select name="role" id="id_role" class="mt-1 block px-3 h-8 w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50" required>
+            <select name="role" id="id_role" class="mt-1 block px-3 h-8 w-full shadow-sm border-b border-gray-300 rounded-md focus:ring focus:ring-purple-500 focus:ring-opacity-50" required>
                 <option value="" disabled selected>Select your role</option>
                 <option value="lawyer">Lawyer</option>
                 <option value="client">Client</option>
@@ -46,7 +42,7 @@
         </div>
         <div>
             <label for="id_password" class="block text-sm font-medium text-gray-700">Password:</label>
-            <input type="password" name="password1" id="id_password" class="mt-1 px-3 block w-full h-8 border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50" required autocomplete="new-password">
+            <input type="password" name="password1" id="id_password" class="mt-1 block px-3 h-8 w-full shadow-sm border-b border-gray-300 rounded-md focus:ring focus:ring-purple-500 focus:ring-opacity-50" required autocomplete="new-password">
             <div class="bg-gray-50 rounded-lg shadow-inner px-4 py-1 mt-2">
                 <ul id="password-suggestions" class="mt-2 text-xs text-gray-500 list-disc pl-5">
                     <li class="suggestion-item">At least 8 characters long</li>
@@ -62,15 +58,25 @@
         </div>
         <div>
             <label for="id_confirm_password" class="block text-sm font-medium text-gray-700">Confirm Password:</label>
-            <input type="password" name="password2" id="id_confirm_password" class="mt-1 px-3 block w-full h-8 border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50" required autocomplete="new-password">
+            <input type="password" name="password2" id="id_confirm_password" class="mt-1 block px-3 h-8 w-full shadow-sm border-b border-gray-300 rounded-md focus:ring focus:ring-purple-500 focus:ring-opacity-50" required autocomplete="new-password">
             <p id="confirm-password-error" class="text-red-600 text-sm mt-1 {% if form.password2.errors %}{{ '' }}{% else %}hidden{% endif %}">
                 {{ form.password2.errors|first }}
             </p>
         </div>
-        <button type="submit" id="submit-button" class="w-full bg-green-600 text-white font-bold py-2 rounded-md hover:bg-green-500 transition duration-200">Register</button>
+        <button type="submit" id="submit-button" class="w-full bg-gray-600 text-white font-bold py-2 rounded-md hover:bg-red-500 transition duration-200">Register</button>
     </form>
 {% endblock %}
-
+{% block postcontent %}
+<div id="" class="flex justify-center mt-1 md:mt-4">
+    <div class="flex items-center px-3 text-sm">
+        <p class="font-medium text-gray-600"> Already Registered?
+        <a href="{% url 'lawyer_app:login' %}" class="text-purple-500 hover:text-purple-700  rounded-md font-semibold "> 
+            Try Logging In!
+        </a>
+        </p>
+    </div>
+</div>
+{% endblock %}
 {% block script %}
 <script>
     const form = document.getElementById('registration-form');
@@ -80,8 +86,8 @@
     const emailInput = document.getElementById('id_email');
     const firstNameInput = document.getElementById('id_first_name');
     const lastNameInput = document.getElementById('id_last_name');
+    const submitButton = document.getElementById('submit-button');
 
-    // Function to validate password
     function validatePassword() {
         const password = passwordInput.value;
         const confirmPassword = confirmPasswordInput.value;
@@ -96,7 +102,6 @@
             suggestions[0].classList.remove('hidden');
         }
 
-        // Check for uppercase letters
         if (/[A-Z]/.test(password)) {
             suggestions[1].classList.add('hidden');
         } else {
@@ -104,7 +109,6 @@
             suggestions[1].classList.remove('hidden');
         }
 
-        // Check for lowercase letters
         if (/[a-z]/.test(password)) {
             suggestions[2].classList.add('hidden');
         } else {
@@ -112,7 +116,6 @@
             suggestions[2].classList.remove('hidden');
         }
 
-        // Check for numbers
         if (/\d/.test(password)) {
             suggestions[3].classList.add('hidden');
         } else {
@@ -120,7 +123,6 @@
             suggestions[3].classList.remove('hidden');
         }
 
-        // Check for special characters
         if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
             suggestions[4].classList.add('hidden');
         } else {
@@ -128,7 +130,6 @@
             suggestions[4].classList.remove('hidden');
         }
 
-        // Validate password confirmation
         const confirmPasswordError = document.getElementById('confirm-password-error');
         if (password !== confirmPassword) {
             confirmPasswordError.innerText = "Passwords do not match!";
@@ -136,9 +137,10 @@
         } else {
             confirmPasswordError.classList.add('hidden');
         }
+
+        checkFormValidity();
     }
 
-    // Function to validate email
     function validateEmail() {
         const email = emailInput.value;
         const emailPattern = /^[a-z\d.]{3,}@[a-z]{3,}\.[a-z]{2,}$/;
@@ -152,9 +154,10 @@
             emailError.innerText = "Invalid Email";
             emailError.classList.remove('hidden');
         }
+
+        checkFormValidity();
     }
 
-    // Validate first and last name
     function validateName() {
         const firstNameError = document.getElementById('first-name-error');
         const lastNameError = document.getElementById('last-name-error');
@@ -172,9 +175,35 @@
         } else {
             lastNameError.classList.add('hidden');
         }
+
+        checkFormValidity();
     }
 
-    // Listen for input events on the password fields
+    function checkFormValidity() {
+        const username = document.getElementById('id_username').value.trim();
+        const email = emailInput.value.trim();
+        const password = passwordInput.value.trim();
+        const confirmPassword = confirmPasswordInput.value.trim();
+
+        const isValid =
+            username &&
+            firstNameInput.value.trim() &&
+            lastNameInput.value.trim() &&
+            /^[a-z\d.]{3,}@[a-z]{3,}\.[a-z]{2,}$/.test(email) &&
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(password) &&
+            password === confirmPassword;
+
+        if (isValid) {
+            submitButton.classList.remove('bg-gray-600','hover:bg-red-500');
+            submitButton.classList.add('bg-green-600','hover:bg-green-500');
+            submitButton.disabled = false;
+        } else {
+            submitButton.classList.add('bg-gray-600','hover:bg-red-500');
+            submitButton.classList.remove('bg-green-600','hover:bg-green-500');
+            submitButton.disabled = true;
+        }
+    }
+
     passwordInput.addEventListener('input', validatePassword);
     confirmPasswordInput.addEventListener('input', validatePassword);
     emailInput.addEventListener('input', validateEmail);
@@ -182,48 +211,21 @@
     lastNameInput.addEventListener('input', validateName);
 
     form.addEventListener('submit', function(event) {
-        // Clear previous error messages
-        document.getElementById('username-error').classList.add('hidden');
-        document.getElementById('email-error').classList.add('hidden');
-        document.getElementById('password-error').classList.add('hidden');
-        document.getElementById('first-name-error').classList.add('hidden');
-        document.getElementById('last-name-error').classList.add('hidden');
-
-        const username = document.getElementById('id_username').value;
         let hasError = false;
 
-        // Validate first name
-        if (firstNameInput.value.trim() === "") {
-            document.getElementById('first-name-error').innerText = "First name is required.";
-            document.getElementById('first-name-error').classList.remove('hidden');
-            hasError = true;
-        }
+        validateName();
+        validateEmail();
+        validatePassword();
 
-        // Validate last name
-        if (lastNameInput.value.trim() === "") {
-            document.getElementById('last-name-error').innerText = "Last name is required.";
-            document.getElementById('last-name-error').classList.remove('hidden');
-            hasError = true;
-        }
+        const email = emailInput.value.trim();
+        const password = passwordInput.value.trim();
 
-        // Validate username
-        if (username.trim() === "") {
-            document.getElementById('username-error').innerText = "Username is required.";
-            document.getElementById('username-error').classList.remove('hidden');
-            hasError = true;
-        }
-
-        // Validate email
-        
-        if (!/^[a-z\d.]{3,}@[a-z]{3,}\.[a-z]{2,}$/.test(emailInput.value)) {
-            document.getElementById('email-error').innerText = "Email is required.";
+        if (!/^[a-z\d.]{3,}@[a-z]{3,}\.[a-z]{2,}$/.test(email)) {
             document.getElementById('email-error').classList.remove('hidden');
             hasError = true;
         }
 
-        // Final validation check for password pattern
-        if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(passwordInput.value)) {
-            document.getElementById('password-error').innerText = "Password must meet the criteria listed above.";
+        if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(password)) {
             document.getElementById('password-error').classList.remove('hidden');
             hasError = true;
         }
@@ -232,6 +234,7 @@
             event.preventDefault();
         }
     });
-</script>
 
+    checkFormValidity();
+</script>
 {% endblock %}

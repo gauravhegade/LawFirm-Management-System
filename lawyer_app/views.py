@@ -317,12 +317,10 @@ def server_error(request):
 def predict(request):
     return render(request,"predict.html")
 # Create your views here.
-
+import numpy
 def predict_chances(request):
     if request.method == 'POST':
         try:
-            print(request.POST.get)
-            #print("hello")
             specialization = int(request.POST.get('specialization'))
             experience = int(request.POST.get('experience'))
             region = int(request.POST.get('region'))
@@ -335,11 +333,11 @@ def predict_chances(request):
             user_input_preprocessed = preprocess_input(user_input)
             model = pd.read_pickle(r"./linear_regression_model.pkl")
             result = model.predict(user_input_preprocessed)
-            prediction_result = f"Predicted cost for {specialization} with {experience} years of experience in {region} is {result}."
+           
+            prediction_result = f"Cost is Rs. {numpy.round(result[0],2)}."
 
-            # Uncomment the following line if you need to save the predictions to a model
-            # PredResults.objects.create(specialization=specialization, experience=experience, region=region, prediction=result)
-            print(prediction_result)
+            # PredResults.objects.create(specialization=specialization, experience=experience, region=region, prediction=result) 
+
             return JsonResponse({'prediction':prediction_result }, safe=False)
         except Exception as e:
             return render(request, 'error_template.html', {'error_message': str(e)})

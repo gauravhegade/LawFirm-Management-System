@@ -2,142 +2,128 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Job Prediction Form</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    /* Your CSS styles go here */
-    body {
-      --bg-color: #212529;
-      --text-color: #E5C07B;
-      --input-bg-color: #343A40;
-      --input-border-color: #5E5E5E;
-      background-color: var(--bg-color);
-      color: var(--text-color);
-    }
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Cost Prediction Form</title>
+	<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+	<style>
+		:root {
+			margin: 0;
+			padding: 0;
+		}
 
-    .container {
-      max-width: 500px;
-      margin: 0 auto;
-      text-align: center;
-    }
+		body {
+			margin: 0;
+			padding: 20px;
+			width: 100vw;
+			height: 100vh;
 
-    form {
-      border: 1px solid var(--input-border-color);
-      padding: 20px;
-      border-radius: 5px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      background-color: var(--input-bg-color);
-      color: var(--text-color);
-      margin: 0 auto;
-    }
+			background: linear-gradient(to bottom right, #dfc5ff, #be84ff);
+			color: #494949;
+		}
 
-    /* ... (other CSS styles) ... */
+		.form-container {
+			background-color: #efefef;
+			border: 1px solid #949494;
+			padding: 20px;
+			border-radius: 5px;
+			box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+		}
 
-    input,
-    select,
-    textarea {
-      background-color: var(--input-bg-color);
-      color: var(--text-color);
-      border: 1px solid var(--input-border-color);
-      border-radius: 4px;
-      padding: 5px 10px;
-      transition: border-color 0.3s ease;
-      width: 100%;
-      box-sizing: border-box;
-    }
+		input,
+		select,
+		textarea {
+			background-color: #efefef;
+			color: #000000;
+			border: 1px solid #5E5E5E;
+			border-radius: 4px;
+			padding: 10px;
+			transition: border-color 0.3s ease;
+			width: 100%;
+			box-sizing: border-box;
+		}
 
-    input:focus,
-    select:focus,
-    textarea:focus {
-      box-shadow: 0 0 3px var(--text-color);
-    }
-
-    nav {
-      background-color: #004080;
-      padding: 10px;
-      text-align: center;
-    }
-
-    nav a {
-      color: white;
-      text-decoration: none;
-      margin: 0 10px;
-    }
-  </style>
-  <nav>
-  </nav>
+		input:focus,
+		select:focus,
+		textarea:focus {
+			box-shadow: 0 0 3px #a0a0a0;
+			outline: none;
+		}
+	</style>
 </head>
 
 <body>
-  <div class="container mt-5">
-    <h1>Job Prediction Form</h1>
-    <form method="post" action="{% url 'lawyer_app:predict_chances' %}">
-      {% csrf_token %}
-      <label for="specialization">Specialization:</label>
-      <input type="text" name="specialization" required>
 
-      <label for="experience">Experience (in years):</label>
-      <input type="number" name="experience" required>
+	<div class="container mx-auto mt-10 max-w-md z-10">
+		<h1 class="text-2xl font-bold text-center mb-5">Cost Prediction Form</h1>
+		<form method="post" action="{% url 'lawyer_app:predict_chances' %}" class="form-container">
+			{% csrf_token %}
+			<label for="specialization" class="block mb-2">Specialization:</label>
+			<select name="specialization" id="specialization" required class="mb-4">
+				<option value="" disabled selected>Select specialization</option>
+				<option value="0">Criminal Justice</option>
+				<option value="1">Family Law Attorney</option>
+				<option value="2">Labor Lawyer</option>
+				<option value="3">Environmental Lawyer</option>
+				<option value="4">Corporate Lawyer</option>
+			</select>
 
-      <label for="region">Region:</label>
-      <input type="text" name="region" required>
+			<label for="experience" class="block mb-2">Experience (in years):</label>
+			<input type="number" name="experience" required class="mb-4">
 
-      <button type="submit" class="btn btn-light">Predict Job</button>
-    </form>
+			<label for="region" class="block mb-2">Region:</label>
+			<select name="region" id="region" required class="mb-4">
+				<option value="" disabled selected>Select region</option>
+				<option value="0">South</option>
+				<option value="1">North</option>
+				<option value="2">East</option>
+				<option value="3">West</option>
+			</select>
 
-    <div class="alert alert-success mt-3" role="alert">
-      <!-- The prediction result will be displayed here -->
-    </div>
+			<button type="submit" class="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700">Predict
+				Job</button>
+		</form>
 
-    <span class="dark-mode-switch fas fa-sun" title="Toggle Light Theme"></span>
-  </div>
+		<div class="alert alert-success mt-3 text-center" role="alert">
+			<!-- The prediction result will be displayed here -->
+		</div>
 
-  <script src="https://kit.fontawesome.com/yourcodehere.js" crossorigin="anonymous"></script>
-  <script>
-    // Your JavaScript logic goes here
-    const form = document.querySelector('form');
-    const predictionContainer = document.querySelector('.alert-success');
-    const loadingSpinner = document.createElement('div');
-    loadingSpinner.className = 'spinner-border text-light';
-    loadingSpinner.role = 'status';
+		<span class="dark-mode-switch fas fa-sun text-center" title="Toggle Light Theme"></span>
+	</div>
 
-    form.addEventListener('submit', async (event) => {
-      event.preventDefault();
+	<script src="https://kit.fontawesome.com/yourcodehere.js" crossorigin="anonymous"></script>
+	<script>
+		const form = document.querySelector('form');
+		const predictionContainer = document.querySelector('.alert-success');
+		const loadingSpinner = document.createElement('div');
+		loadingSpinner.className = 'spinner-border text-bold';
+		loadingSpinner.role = 'status';
 
-      // Show loading spinner during form submission
-      predictionContainer.innerHTML = '';
-      predictionContainer.appendChild(loadingSpinner);
+		form.addEventListener('submit', async (event) => {
+			event.preventDefault();
 
-      // Fetch the form data
-      const formData = new FormData(form);
+			predictionContainer.innerHTML = '';
+			predictionContainer.appendChild(loadingSpinner);
 
-      try {
-        // Send a POST request to the server with form data
-        const response = await fetch(form.action, {
-          method: 'POST',
-          body: formData,
-        });
+			const formData = new FormData(form);
 
-        if (response.ok) {
-          // Parse the JSON response from the server
-          const result = await response.json();
+			try {
+				const response = await fetch(form.action, {
+					method: 'POST',
+					body: formData,
+				});
 
-          // Display the prediction result
-          predictionContainer.innerHTML = `<strong>Prediction:</strong> ${result.prediction}`;
-        } else {
-          // Handle non-successful response (e.g., display an error message)
-          predictionContainer.innerHTML = 'Error fetching prediction';
-        }
-      } catch (error) {
-        // Handle any network or other errors
-        predictionContainer.innerHTML = 'Error fetching prediction';
-      }
-    });
-
-    // ... (rest of your existing JavaScript code)
-  </script>
+				if (response.ok) {
+					const result = await response.json();
+					predictionContainer.innerHTML = `<p class="text-bold text-black">Prediction: ${result.prediction}</p>`;
+				} else {
+					predictionContainer.innerHTML = 'Error fetching prediction';
+				}
+			} catch (error) {
+				predictionContainer.innerHTML = 'Error fetching prediction';
+			}
+		});
+	</script>
 </body>
 
 </html>

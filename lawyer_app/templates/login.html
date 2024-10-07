@@ -1,88 +1,100 @@
 {% extends 'base.html' %}
 {% block header %}Login{% endblock %}
-
+{% block text %}
+<div class="absolute inset-0 top-1/3 flex justify-center md:top-24 z-10 ">
+    <div id="animatedText" class="text-5xl font-extrabold text-center text-purple-700 font-sans"></div>
+</div>
+{% endblock %}
 {% block content %}
-    <div id="" class="fixed top-9 right-4 z-40 text-gray-900 p-3 hover:shadow-xl transition duration-300" >
-        <a href="{% url 'lawyer_app:register' %}" class="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-base font-medium flex items-center">
-            <i class="fa-solid fa-user-plus mr-2"></i> Register
-        </a>
-    </div>
-    <div class="container mx-auto">
-        <div class="flex justify-center">
-            <div class="w-full max-w-md">
-                        <form method="post" class="space-y-4" id="login-form">
-                            {% csrf_token %}
-                            <div>
-                                <label for="id_username" class="block">
-                                    <span class=" text-sm font-medium text-gray-700">
-                                        Username<span class="text-red-500 pl-0.5 font-bold">*</span>
-                                    </span>
-                                </label>
-                                <input type="text" name="username" id="id_username" class="mt-1 block px-3 h-8 w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50" required>
-                                <p id="username-error" class="text-red-600 text-sm mt-1 hidden"></p>
-                            </div>
-                            <div>
-                                <label for="id_password" class="block">
-                                    <span class="text-sm font-medium text-gray-700">
-                                        Password<span class="text-red-500 pl-0.5 font-bold">*</span>
-                                    </span>
-                                </label>
-                                <input type="password" name="password" id="id_password" class="mt-1 px-3 block w-full h-8 border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-100 transition duration-200" required autocomplete="new-password">
-                                <p id="password-error" class="text-red-600 text-sm mt-1 hidden"></p>
-                            </div>
-                            {% if form.non_field_errors.1 %}
-                                <p id="login-error" class="text-red-600 text-sm mt-1">{{ form.non_field_errors.1}}</p>
-                            {% endif %}
+<div class="container mx-auto">
+    <div class="flex justify-center">
+        <div class="w-full max-w-md">
+            <form method="post" class="space-y-4" id="login-form">
+                {% csrf_token %}
+                <div>
+                    <label for="id_username" class="block">
+                        <span class="text-sm font-medium text-gray-700">
+                            Username<span class="text-red-500 pl-0.5 font-bold">*</span>
+                        </span>
+                    </label>
+                    <input type="text" name="username" id="id_username" class="mt-1 block px-3 h-8 w-full shadow-sm border-b border-gray-300 rounded-md focus:ring focus:ring-purple-500 focus:ring-opacity-50" required autocomplete="new-username">
+                    <p id="username-error" class="text-red-600 text-sm mt-1 hidden"></p>
+                </div>
+                <div>
+                    <label for="id_password" class="block">
+                        <span class="text-sm font-medium text-gray-700">
+                            Password<span class="text-red-500 pl-0.5 font-bold">*</span>
+                        </span>
+                    </label>
+                    <input type="password" name="password" id="id_password" class="mt-1 block px-3 h-8 w-full shadow-sm border-b border-gray-300 rounded-md focus:ring focus:ring-purple-500 focus:ring-opacity-50" required autocomplete="new-password">
+                    <p id="password-error" class="text-red-600 text-sm mt-1 hidden"></p>
+                </div>
+                {% if form.non_field_errors.1 %}
+                <p id="login-error" class="text-red-600 text-sm mt-1">{{ form.non_field_errors.1}}</p>
+                {% endif %}
 
-                            <button type="submit" id="login-button" class="w-full bg-gray-600 text-white font-bold py-2 rounded-md hover:bg-green-500 transition duration-200">Login</button>
-                        </form>
-
-            </div>
+                <button type="submit" id="login-button" class="w-full bg-gray-600 text-white font-bold py-2 rounded-lg hover:bg-red-500 transition duration-200">Login</button>
+            </form>
         </div>
     </div>
-{% endblock %}
+</div>
 
+{% endblock %}
+{% block postcontent %}
+<div id="" class="flex justify-center mt-1 md:mt-4">
+    <div class="flex items-center px-3 text-sm">
+        <p class="font-medium text-gray-600"> New to the App?
+        <a href="{% url 'lawyer_app:register' %}" class="text-purple-500 hover:text-purple-700  rounded-md font-semibold "> 
+            Register Now!
+        </a>
+        </p>
+    </div>
+</div>
+{% endblock %}
 {% block script %}
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const passwordInput = document.getElementById('id_password');
         const usernameInput = document.getElementById('id_username');
         const loginButton = document.getElementById('login-button');
+        const loginForm= document.getElementById('login-form');
 
         function updateButtonState() {
-            const isUsernameFilled = usernameInput.value.trim() !== '';
-            const isPasswordValid = passwordInput.value.length >= 8;
+                const isUsernameFilled = usernameInput.value.trim() !== '';
+                const isPasswordValid = passwordInput.value.length >= 8;
 
-            // Change button color based on conditions
-            if (!isUsernameFilled || !isPasswordValid) {
-                loginButton.classList.remove('bg-green-600', 'hover:bg-green-500');
-                loginButton.classList.add('bg-gray-600', 'hover:bg-gray-500');
-            } else {
-                loginButton.classList.remove('bg-gray-600', 'hover:bg-gray-500');
-                loginButton.classList.add('bg-green-600', 'hover:bg-green-500');
+                if (!isUsernameFilled || !isPasswordValid) {
+                    loginButton.classList.remove('bg-green-600', 'hover:bg-green-500');
+                    loginButton.classList.add('bg-gray-600', 'hover:bg-red-500');
+                    return false;
+                } else {
+                    loginButton.classList.remove('bg-gray-600', 'hover:bg-red-500');
+                    loginButton.classList.add('bg-green-600', 'hover:bg-green-500');
+                    return true; 
             }
         }
 
-        // Initial check for button state
         updateButtonState();
+        loginForm.addEventListener('submit', function (e) {
+                if (!updateButtonState()) {
+                    e.preventDefault(); 
+                    alert("Please correct the errors before submitting the form.");
+                }
+            });
 
-        // Event listeners for input changes
+        
         usernameInput.addEventListener('input', updateButtonState);
-        passwordInput.addEventListener('input', function() {
-            // Remove any previous ring classes
+        passwordInput.addEventListener('input', function () {
             passwordInput.classList.remove('ring-red-900', 'ring-green-800', 'ring-3');
 
-            // Add ring effect based on password length
             if (passwordInput.value.length < 8) {
-                passwordInput.classList.remove('ring-green-800', 'ring-3');
-                passwordInput.classList.add('ring-red-900', 'ring-3');
+                passwordInput.classList.add('ring-3', 'ring-red-900');
             } else {
-                passwordInput.classList.remove('ring-red-900', 'ring-3');
-                passwordInput.classList.add('ring-green-800', 'ring-3');
+                passwordInput.classList.add('ring-3', 'ring-green-800');
             }
 
             updateButtonState();
         });
-    });
+    })
 </script>
 {% endblock %}

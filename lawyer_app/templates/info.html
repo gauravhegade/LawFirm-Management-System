@@ -1,12 +1,72 @@
-{% extends 'base.html' %}
-{% block header %} Law Database System {%endblock%}
-{% block content %}
-    <div id="" class="fixed top-4 right-4 z-40 text-gray-900 p-3 hover:shadow-xl transition duration-300">
-        <a href="{% url 'lawyer_app:login' %}" class="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-base font-medium flex items-center">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LawFirm DB</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gradient-to-br from-purple-100 to-purple-200 min-h-screen flex flex-col justify-between">
+    <!-- Navbar or Header -->
+    <div class="fixed top-4 right-4 z-40 text-gray-900 p-3 hover:shadow-xl transition duration-300">
+        <a href="/login" class="text-purple-500 hover:text-purple-700 px-3 py-2 rounded-md text-base font-medium flex items-center">
             <i class="fa-solid fa-right-to-bracket mr-2"></i> Login
         </a>
     </div>
-    <p class="text-lg text-gray-700 text-justify">
-        The Law Database System is a comprehensive web-based application designed to streamline the management and accessibility of legal cases, documents, and client information for both clients and lawyers. The system provides a secure and efficient platform for collaboration, ensuring that all parties involved in a case can access relevant information in real-time.
-    </p>
-{% endblock %}
+
+    <!-- Main Content -->
+    <div class="container mx-auto py-16 px-6 lg:px-12 text-center flex-grow">
+        <h1 class="text-4xl lg:text-6xl font-extrabold text-purple-700 leading-tight">Law Database System</h1>
+        <p class="text-lg lg:text-xl mt-4 text-purple-600 font-medium max-w-2xl mx-auto">
+            A secure and efficient platform designed for managing legal cases, documents, and client information. 
+            Whether you're a client or a lawyer, stay connected and collaborate in real-time on your legal matters.
+        </p>
+
+        <!-- Features Section -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
+            <!-- Feature 1 -->
+            <div class="bg-white shadow-lg p-6 rounded-lg">
+                <div class="text-purple-700 text-4xl mb-4">
+                    <i class="fa-solid fa-gavel"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-purple-700">Manage Cases</h3>
+                <p class="text-gray-600 mt-2">
+                    Keep all case-related details in one secure location and access them anytime, anywhere.
+                </p>
+            </div>
+
+            <!-- Feature 2 -->
+            <div class="bg-white shadow-lg p-6 rounded-lg">
+                <div class="text-purple-700 text-4xl mb-4">
+                    <i class="fa-solid fa-folder-open"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-purple-700">Organize Documents</h3>
+                <p class="text-gray-600 mt-2">
+                    Upload, manage, and share documents securely between clients and lawyers.
+                </p>
+            </div>
+
+            <!-- Feature 3 -->
+            <div class="bg-white shadow-lg p-6 rounded-lg">
+                <div class="text-purple-700 text-4xl mb-4">
+                    <i class="fa-solid fa-user-friends"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-purple-700">Collaborate Effortlessly</h3>
+                <p class="text-gray-600 mt-2">
+                    Stay in sync with your legal team and clients with real-time updates and notifications.
+                </p>
+                <p class="text-purple-600 font-semibold"> In Alpha Mode</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white py-6">
+        <div class="text-center text-gray-600">
+            &copy; 2024 Law Database System | All Rights Reserved
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
+</body>
+</html>

@@ -1,14 +1,86 @@
-{% extends 'base.html' %}
 
-{% block title %}{{message_title}}{% endblock %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
 
-{% block header %}{{message_title}}{% endblock %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{message_title}}{% endblock %}</title>
+    <link rel="icon" href="{% static 'favicon-96x96.png' %}" sizes="96x96" type="image/png">
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 
-{% block content %}
-    <div class="text-center">
-        <h3 class="text-lg font-semibold mb-4 italic">{{ message_head }}</h3>
-        <h4 class="text-lg font-semibold mb-4">{{ message_body }}</h4>
-        <p>Please check your email for further instructions.</p>
-        <a href="{% url 'lawyer_app:login' %}" class="mt-4 inline-block bg-blue-600 text-white px-4 py-2 rounded">Log In</a>
+    <style>
+        body {
+            background-color: #f8fafc;
+        }
+        .foot{
+            transition: all 1s ease-in-out;
+        }
+        .foot:hover .heart,.foot:active .heart{
+            animation: beat 1s infinite;
+        }
+        .heart:hover,.heart:active{
+            background: linear-gradient(180deg, rgba(255,55,0,1) 40%, rgba(37,99,235,1) 100%);
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        @keyframes beat {
+            0%, 100% {
+                transform: scale(1);
+            }
+            25% {
+                transform: scale(1.1);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+            75% {
+                transform: scale(1.1);
+            }
+        }
+
+
+    </style>
+</head>
+
+<body>
+    <div class="relative h-screen">
+        
+        <div class="absolute inset-0 bg-gradient-to-br from-purple-100 to-purple-200 z-0 md:block"></div>
+
+        <div class="container mx-auto my-auto pb-2 h-full flex flex-col justify-end md:pb-0 md:flex-row md:items-center md:justify-center relative z-20">
+            <div class="w-full max-w-md">
+                <div class="bg-white shadow-none md:shadow-lg  rounded-lg  ">
+                    <div class=" flex justify-center bg-white text-purple-600 rounded-t-lg p-4 pb-0 justify-start">
+                        <h2 class="text-2xl font-bold">{% block header %}{{message_title}}{% endblock %}</h2>
+                    </div>
+                    <div class="p-6 pt-1">
+                        <div class="text-center">
+                            <h3 class="text-lg font-semibold mb-2 italic">{{ message_head }}</h3>
+                            <h4 class="text-lg font-semibold mb-4">{{ message_body }}</h4>
+                            <p>Please check your email for further instructions.</p>
+                            <a href="{% url 'lawyer_app:login' %}" class="mt-4 inline-block bg-purple-600 text-white px-4 py-2 rounded">Log In</a>
+                        </div>
+                    </div>
+                </div>
+        
+            </div>
+        </div>
     </div>
-{% endblock %}
+
+    <footer class="text-sm text-center">
+        <p class="font-mono foot">
+            &copy; 2024 Made with 
+            <span class="inline-block transition duration-300 transform  text-red-500 hover:scale-150 hover:text-red-500 heart"><i class="fa-solid fa-heart"></i></span> 
+            by Joshua
+        </p>
+        
+
+    </footer>
+
+    {% block script %}{% endblock %}
+</body>
