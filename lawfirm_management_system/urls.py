@@ -1,11 +1,11 @@
 """
-URL configuration for my_app project.
+URL configuration for lawfirm_management_system project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.0/topics/http/urls/
 Examples:
 Function views
-    1. Add an import:  from my_app import views
+    1. Add an import:  from lawfirm_management_system import views
     2. Add a URL to urlpatterns:  path('', views.home, name='home')
 Class-based views
     1. Add an import:  from other_app.views import Home
@@ -14,16 +14,17 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from lawyer_app import admin
-from django.urls import path,include
-from django.conf.urls import ( handler404, handler500 )
 
-from lawyer_app.views import page_not_found,server_error
-app_name ='lawyer_app'
+from lawyer_app import admin
+from django.urls import path, include
+from django.conf.urls import handler404, handler500
+
+from lawyer_app.views import page_not_found, server_error
+
+app_name = "lawyer_app"
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    
-    path('', include('lawyer_app.urls')),
+    path("admin/", admin.site.urls),
+    path("", include("lawyer_app.urls")),
 ]
 handler404 = page_not_found
 handler500 = server_error
