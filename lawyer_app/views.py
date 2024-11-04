@@ -121,7 +121,7 @@ def login_user(request):
         else:
             form.add_error(None, "Invalid username or password.")
             messages.error(request, "Please correct the errors below.")
-        # print(form.non_field_errors().as_json())
+            # print(form.non_field_errors().as_json())
     else:
         form = LoginForm()
 
@@ -373,7 +373,7 @@ def predict_chances(request):
             model = pd.read_pickle(r"./linear_regression_model.pkl")
             result = model.predict(user_input_preprocessed)
 
-            prediction_result = f"Cost is Rs. {numpy.round(result[0],2)}."
+            prediction_result = f"Cost is Rs. {numpy.round(result[0],2)}"
 
             # PredResults.objects.create(specialization=specialization, experience=experience, region=region, prediction=result)
 
