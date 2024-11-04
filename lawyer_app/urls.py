@@ -9,7 +9,7 @@ app_name = "lawyer_app"
 urlpatterns = [
     path("", views.info, name="home"),
     path("login", views.login_user, name="login"),
-    path("upload-document", views.upload_document, name="upload_document"),
+    path("client/upload-document", views.upload_document, name="upload_document"),
     path("lawyer/case-status", views.case_status, name="case_status"),
     path("client/dashboard", views.client_dashboard, name="client_dashboard"),
     path("client/<int:client_id>", views.client_profile, name="client_profile"),
@@ -31,7 +31,7 @@ urlpatterns = [
         name="complete_client_profile",
     ),
     path("register", views.register, name="register"),
-    path("predict", views.predict, name="predict"),
+    path("client/predict-cost", views.predict, name="predict"),
     path("predict_results/", views.predict_chances, name="predict_chances"),
     path("submit_prediction/", views.predict_chances, name="submit_prediction"),
     # path('documents/', views.list_documents, name='list_documents'),
@@ -42,7 +42,7 @@ urlpatterns = [
         name="download_document",
     ),
     path("documents/view/<str:file_id>", views.view_document, name="view_document"),
-    path("cases/<int:case_id>", views.case_details, name="case_details"),
+    path("client/cases/<int:case_id>", views.case_details, name="case_details"),
     path(
         "documents/cases/<int:case_id>",
         views.fetch_case_documents,
