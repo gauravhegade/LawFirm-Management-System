@@ -84,29 +84,10 @@ TEMPLATES = [
 WSGI_APPLICATION = "lawfirm_management_system.wsgi.application"
 
 
-# Database
-# https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-
-SUPABASE_DB_NAME = os.getenv("SUPABASE_DB_NAME")
-SUPABASE_USER = os.getenv("SUPABASE_USER")
-SUPABASE_PASSWORD = os.getenv("SUPABASE_PASSWORD")
-SUPABASE_HOST = os.getenv("SUPABASE_HOST")
-SUPABASE_PORT = os.getenv("SUPABASE_PORT")
-
-# print("Database Name:", SUPABASE_DB_NAME)
-# print("User:", SUPABASE_USER)
-# print("Password:", SUPABASE_PASSWORD)
-# print("Host:", SUPABASE_HOST)
-# print("Port:", SUPABASE_PORT)
-
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": SUPABASE_DB_NAME,  # New database name
-        "USER": SUPABASE_USER,  # Supabase user
-        "PASSWORD": SUPABASE_PASSWORD,  # Supabase password
-        "HOST": SUPABASE_HOST,  # Supabase host
-        "PORT": SUPABASE_PORT,  # Supabase port
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
 
