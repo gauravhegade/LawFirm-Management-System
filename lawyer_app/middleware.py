@@ -1,5 +1,5 @@
-from django.utils.decorators import method_decorator
-from django.views.decorators.cache import never_cache
+import time
+
 
 class NoCacheMiddleware:
     def __init__(self, get_response):
@@ -7,11 +7,10 @@ class NoCacheMiddleware:
 
     def __call__(self, request):
         response = self.get_response(request)
-        response['Cache-Control'] = 'no-store'
-        response['Pragma'] = 'no-cache'
-        response['Expires'] = '0'
+        response["Cache-Control"] = "no-store"
+        response["Pragma"] = "no-cache"
+        response["Expires"] = "0"
         return response
-import time
 
 
 class StatsMiddleware:
@@ -26,5 +25,5 @@ class StatsMiddleware:
         duration = time.time() - start_time
 
         response["X-Page-Generation-Duration-ms"] = int(duration * 1000)
-        print('Hi')
+        print("Hi")
         return response
